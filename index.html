@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACADEMIA BOA FORMA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .panel {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+            position: relative;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-row > * {
+            flex: 1;
+        }
+
+        .status-paid {
+            color: green;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .status-unpaid {
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .status-warning {
+            color: #FFA500;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            background: #ddd;
+            border: none;
+            cursor: pointer;
+        }
+
+        .tab-button.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .link-button {
+            background: none;
+            border: none;
+            color: #3498db;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0;
+            margin: 10px 0;
+            display: block;
+            text-align: center;
+        }
+
+        .link-button:hover {
+            color: #2980b9;
+        }
+
+        .client-actions, .export-actions, .filter-options, .user-actions {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .client-actions input, .filter-options input, .filter-options select, .user-actions input {
+            flex: 2;
+        }
+
+        .client-actions button, .filter-options button, .export-actions button, .user-actions button {
+            flex: 1;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #e74c3c;
+            font-size: 12px;
+            width: auto;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .admin-actions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-form-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f1f1;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .user-form-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f1f1;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .selected-row {
+            background-color: #e3f2fd !important;
+        }
+
+        /* Estilo para a janela de impressão */
+        #printWindow {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        #printContent {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        #printHeader {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #printHeader h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        #printHeader h2 {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+
+        .client-data {
+            margin-bottom: 20px;
+        }
+
+        .client-data-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .client-data-label {
+            flex: 1;
+            font-weight: bold;
+        }
+
+        .client-data-value {
+            flex: 3;
+            border-bottom: 1px solid #000;
+            padding-bottom: 3px;
+        }
+
+        .signature-line {
+            margin-top: 50px;
+            text-align: center;
+            border-top: 1px solid #000;
+            width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 5px;
+        }
+
+        /* Estilo para os botões de impressão na tabela */
+        #printFormBtn, #printClientFormBtn, #printReceiptBtn {
+            padding: 6px 10px;
+            font-size: 12px;
+            width: auto;
+        }
+
+        /* Estilo para os botões na janela de impressão */
+        .close-print, .print-btn {
+            position: fixed;
+            top: 20px;
+            padding: 6px 10px;
+            font-size: 12px;
+            width: auto;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .close-print {
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+        }
+
+        .print-btn {
+            right: 120px;
+            background: #3498db;
+            color: white;
+        }
+
+        /* Estilo para botões pequenos */
+        .filter-options button.btn-success {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        /* Modal de escolha de painel */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Estilo para o comprovante de pagamento */
+        .receipt {
+            font-family: Arial, sans-serif;
+            border: 2px solid #000;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .receipt-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .receipt-header h2 {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+
+        .receipt-data {
+            margin-bottom: 20px;
+        }
+
+        .receipt-data-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .receipt-data-label {
+            flex: 1;
+            font-weight: bold;
+        }
+
+        .receipt-data-value {
+            flex: 2;
+            border-bottom: 1px solid #000;
+            padding-bottom: 3px;
+        }
+
+        .receipt-footer {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .receipt-signature {
+            border-top: 1px solid #000;
+            width: 60%;
+            margin: 40px auto 0;
+            padding-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body id="mainBody">
+    <!-- Página de Login -->
+    <div id="loginPage" class="container">
+        <h1>ACADEMIA BOA FORMA</h1>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="E-mail" required>
+            <input type="password" id="loginPassword" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+            <button type="button" id="forgotPassword" class="link-button">Esqueci minha senha</button>
+            <button type="button" id="registerLink" class="link-button">Criar nova conta</button>
+        </form>
+        <div id="loginMessage" class="message" style="display: none;"></div>
+    </div>
+
+    <!-- Página de Cadastro de Usuários -->
+    <div id="registerPage" class="container" style="display:none;">
+        <h2>Cadastro de Novo Usuário</h2>
+        <form id="registerForm">
+            <input type="text" id="registerName" placeholder="Nome completo" required>
+            <input type="text" id="registerAddress" placeholder="Endereço" required>
+            <input type="email" id="registerEmail" placeholder="E-mail" required>
+            <input type="password" id="registerPassword" placeholder="Senha" required>
+            <input type="password" id="registerConfirmPassword" placeholder="Confirmar Senha" required>
+            <button type="submit">Cadastrar</button>
+            <button type="button" id="backToLogin" class="link-button">Voltar para login</button>
+        </form>
+        <div id="registerMessage" class="message" style="display: none;"></div>
+    </div>
+
+    <!-- Página de Recuperação de Senha -->
+    <div id="recoveryPage" class="container" style="display:none;">
+        <h2>Recuperação de Senha</h2>
+        <form id="recoveryForm">
+            <input type="email" id="recoveryEmail" placeholder="E-mail cadastrado" required>
+            <button type="submit">Enviar link de recuperação</button>
+            <button type="button" id="backToLoginFromRecovery" class="link-button">Voltar para login</button>
+        </form>
+        <div id="recoveryMessage" class="message" style="display: none;"></div>
+    </div>
+
+    <!-- Modal de escolha de painel -->
+    <div id="panelChoiceModal" class="modal">
+        <div class="modal-content">
+            <h2>Escolha o Painel</h2>
+            <p>Você deseja acessar o painel de cadastro ou o painel de administração?</p>
+            <div class="modal-buttons">
+                <button id="chooseClientPanel" class="btn-success">Painel de Cadastro</button>
+                <button id="chooseAdminPanel" class="btn-warning">Painel de Administração</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Painel de Cadastro de Clientes -->
+    <div id="clientPanel" class="panel">
+        <button id="logoutBtn" class="logout-btn">Sair</button>
+        <h2>Cadastro de Clientes - ACADEMIA BOA FORMA</h2>
+        
+        <form id="clientForm">
+            <input type="hidden" id="clientId">
+            <div class="form-row">
+                <input type="text" id="clientName" placeholder="Nome completo" required>
+                <select id="clientGender" required>
+                    <option value="">Sexo</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                    <option value="Outro">Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <input type="text" id="clientRg" placeholder="RG" required>
+                <input type="text" id="clientRgOrg" placeholder="Órgão Emissor" required>
+                <select id="clientRgUf" required>
+                    <option value="">UF</option>
+                    <option value="AC">AC</option>
+                    <option value="AL">AL</option>
+                    <option value="AP">AP</option>
+                    <option value="AM">AM</option>
+                    <option value="BA">BA</option>
+                    <option value="CE">CE</option>
+                    <option value="DF">DF</option>
+                    <option value="ES">ES</option>
+                    <option value="GO">GO</option>
+                    <option value="MA">MA</option>
+                    <option value="MT">MT</option>
+                    <option value="MS">MS</option>
+                    <option value="MG">MG</option>
+                    <option value="PA">PA</option>
+                    <option value="PB">PB</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="PI">PI</option>
+                    <option value="RJ">RJ</option>
+                    <option value="RN">RN</option>
+                    <option value="RS">RS</option>
+                    <option value="RO">RO</option>
+                    <option value="RR">RR</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <input type="date" id="clientRgDate" placeholder="Data de Emissão" required>
+                <input type="text" id="clientAddress" placeholder="Endereço" required>
+                <input type="text" id="clientNeighborhood" placeholder="Bairro" required>
+            </div>
+            
+            <div class="form-row">
+                <input type="text" id="clientCep" placeholder="CEP" required>
+                <input type="text" id="clientCity" placeholder="Cidade" required>
+                <select id="clientUf" required>
+                    <option value="">UF</option>
+                    <option value="AC">AC</option>
+                    <option value="AL">AL</option>
+                    <option value="AP">AP</option>
+                    <option value="AM">AM</option>
+                    <option value="BA">BA</option>
+                    <option value="CE">CE</option>
+                    <option value="DF">DF</option>
+                    <option value="ES">ES</option>
+                    <option value="GO">GO</option>
+                    <option value="MA">MA</option>
+                    <option value="MT">MT</option>
+                    <option value="MS">MS</option>
+                    <option value="MG">MG</option>
+                    <option value="PA">PA</option>
+                    <option value="PB">PB</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="PI">PI</option>
+                    <option value="RJ">RJ</option>
+                    <option value="RN">RN</option>
+                    <option value="RS">RS</option>
+                    <option value="RO">RO</option>
+                    <option value="RR">RR</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <input type="email" id="clientEmail" placeholder="E-mail" required>
+                <input type="tel" id="clientPhone" placeholder="Contato" required>
+                <input type="number" id="clientMonthlyPayment" placeholder="Valor da Mensalidade" step="0.01" required>
+                <input type="date" id="clientDueDate" placeholder="Data de Vencimento" required>
+            </div>
+            
+            <div class="form-row">
+                <button type="submit" id="saveClientBtn">Cadastrar Cliente</button>
+                <button type="button" id="updateClientBtn" style="display: none;">Salvar Alteração</button>
+                <button type="button" id="cancelEditBtn" style="display: none;">Cancelar</button>
+            </div>
+        </form>
+        
+        <div class="client-actions">
+            <button id="markAllPaid">Marcar todos como pagos</button>
+            <input type="text" id="clientSearch" placeholder="Pesquisar cliente...">
+            <button id="searchClient">Pesquisar</button>
+            <button id="clearSearch">Limpar</button>
+        </div>
+        
+        <table id="clientsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Sexo</th>
+                    <th>RG</th>
+                    <th>Contato</th>
+                    <th>Status</th>
+                    <th>Cadastro</th>
+                    <th>Vencimento</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="clientsTableBody">
+                <!-- Dados dos clientes serão inseridos aqui via JavaScript -->
+            </tbody>
+        </table>
+        
+        <div class="export-actions">
+            <button id="exportExcel">Exportar para Excel</button>
+            <button id="clearTable">Limpar Tabela</button>
+        </div>
+    </div>
+
+    <!-- Painel de Administração -->
+    <div id="adminPanel" class="panel">
+        <button id="adminLogoutBtn" class="logout-btn">Sair</button>
+        <div class="admin-actions">
+            <button id="changeBackgroundBtn">Alterar Background</button>
+            <button id="backupBtn">Fazer Backup</button>
+            <button id="restoreBtn">Restaurar Backup</button>
+            <button id="showUsersBtn">Exibir Usuários Cadastrados</button>
+            <button id="changeAdminBtn">Alterar Admin</button>
+        </div>
+        
+        <h2>Painel de Administração</h2>
+        
+        <div class="admin-tabs">
+            <button class="tab-button active" data-tab="usersTab">Usuários</button>
+            <button class="tab-button" data-tab="allClientsTab">Todos os Clientes</button>
+        </div>
+        
+        <div id="usersTab" class="tab-content active">
+            <div class="user-actions">
+                <button id="addUserBtn" class="btn-success">Cadastrar Usuário</button>
+                <button id="editUserBtn" class="btn-success" disabled>Editar Usuário</button>
+                <button id="deleteUserBtn" class="btn-danger" disabled>Excluir Usuário</button>
+                <button id="printFormBtn" class="btn-success" disabled>Imprimir Formulário</button>
+                <input type="text" id="userSearch" placeholder="Pesquisar usuário...">
+                <button id="searchUserBtn">Pesquisar</button>
+                <button id="clearUserSearchBtn">Limpar</button>
+            </div>
+            
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Status</th>
+                        <th>Clientes Cadastrados</th>
+                        <th>Admin</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <!-- Dados dos usuários serão inseridos aqui via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="allClientsTab" class="tab-content">
+            <div class="filter-options">
+                <select id="userFilter">
+                    <option value="">Filtrar por usuário</option>
+                    <!-- Opções de usuários -->
+                </select>
+                <input type="text" id="adminClientSearch" placeholder="Pesquisar por nome ou RG">
+                <button id="adminSearchClient">Pesquisar</button>
+                <button id="adminClearSearch">Limpar</button>
+                <!-- Botão de impressão para clientes -->
+                <button id="printClientFormBtn" class="btn-success" disabled>Imprimir Formulário</button>
+                <button id="printReceiptBtn" class="btn-warning" disabled>Comprovante</button>
+            </div>
+            
+            <table id="allClientsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>RG</th>
+                        <th>Contato</th>
+                        <th>Status</th>
+                        <th>Cadastro</th>
+                        <th>Vencimento</th>
+                        <th>Valor</th>
+                        <th>Cadastrado por</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="allClientsTableBody">
+                    <!-- Todos os clientes serão inseridos aqui via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Formulário de edição de usuário -->
+        <div id="userFormContainer" class="user-form-container">
+            <h3 id="userFormTitle">Cadastrar Novo Usuário</h3>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="form-row">
+                    <input type="text" id="userName" placeholder="Nome completo" required>
+                    <input type="text" id="userAddress" placeholder="Endereço" required>
+                </div>
+                
+                <div class="form-row">
+                    <input type="email" id="userEmail" placeholder="E-mail" required>
+                    <input type="password" id="userPassword" placeholder="Senha" required>
+                </div>
+                
+                <div class="form-row">
+                    <label>
+                        <input type="checkbox" id="userIsAdmin"> Administrador
+                    </label>
+                    <label>
+                        <input type="checkbox" id="userIsActive" checked> Ativo
+                    </label>
+                </div>
+                
+                <div class="form-row">
+                    <button type="button" id="saveUserBtn" class="btn-success">Salvar</button>
+                    <button type="button" id="cancelUserBtn">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Formulário de alteração de admin -->
+        <div id="changeAdminForm" class="user-form-container" style="display: none;">
+            <h3>Alterar Administrador Padrão</h3>
+            <form id="adminChangeForm">
+                <div class="form-row">
+                    <input type="email" id="newAdminEmail" placeholder="Novo e-mail de admin" required>
+                </div>
+                
+                <div class="form-row">
+                    <input type="password" id="newAdminPassword" placeholder="Nova senha de admin" required>
+                </div>
+                
+                <div class="form-row">
+                    <button type="button" id="confirmAdminChange" class="btn-success">Confirmar</button>
+                    <button type="button" id="cancelAdminChange">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Formulário de edição para admin -->
+        <div id="adminEditForm" class="edit-form-container">
+            <h3>Editar Cliente</h3>
+            <form id="adminClientForm">
+                <input type="hidden" id="adminClientId">
+                <div class="form-row">
+                    <input type="text" id="adminClientName" placeholder="Nome completo" required>
+                    <select id="adminClientGender" required>
+                        <option value="">Sexo</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <input type="text" id="adminClientRg" placeholder="RG" required>
+                    <input type="text" id="adminClientRgOrg" placeholder="Órgão Emissor" required>
+                    <select id="adminClientRgUf" required>
+                        <option value="">UF</option>
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="DF">DF</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <input type="date" id="adminClientRgDate" placeholder="Data de Emissão" required>
+                    <input type="text" id="adminClientAddress" placeholder="Endereço" required>
+                    <input type="text" id="adminClientNeighborhood" placeholder="Bairro" required>
+                </div>
+                
+                <div class="form-row">
+                    <input type="text" id="adminClientCep" placeholder="CEP" required>
+                    <input type="text" id="adminClientCity" placeholder="Cidade" required>
+                    <select id="adminClientUf" required>
+                        <option value="">UF</option>
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="DF">DF</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <input type="email" id="adminClientEmail" placeholder="E-mail" required>
+                    <input type="tel" id="adminClientPhone" placeholder="Contato" required>
+                    <input type="number" id="adminClientMonthlyPayment" placeholder="Valor da Mensalidade" step="0.01" required>
+                    <input type="date" id="adminClientDueDate" placeholder="Data de Vencimento" required>
+                </div>
+                
+                <div class="form-row">
+                    <input type="date" id="adminClientRegistrationDate" placeholder="Data de Cadastro" required>
+                </div>
+                
+                <div class="form-row">
+                    <button type="button" id="adminUpdateClientBtn">Salvar Alteração</button>
+                    <button type="button" id="adminCancelEditBtn">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Janela de impressão -->
+    <div id="printWindow">
+        <button class="close-print" onclick="document.getElementById('printWindow').style.display='none'">Fechar</button>
+        <button class="print-btn" onclick="window.print()">Imprimir</button>
+        
+        <div id="printContent">
+            <!-- Conteúdo será preenchido dinamicamente -->
+        </div>
+    </div>
+
+    <script>
+        // Estrutura de dados inicial
+        let users = [
+            {
+                id: 1,
+                name: "Administrador",
+                email: "admin@admin.com",
+                password: "admin",
+                address: "Endereço administrativo",
+                isAdmin: true,
+                isActive: true,
+                clientsRegistered: 0
+            }
+        ];
+
+        let clients = [];
+        let currentUser = null;
+        let isEditingClient = false;
+        let currentEditingClientId = null;
+        let selectedUserId = null;
+        let selectedClientId = null;
+
+        // Carregar dados do localStorage
+        function loadData() {
+            const savedUsers = localStorage.getItem('academiaUsers');
+            const savedClients = localStorage.getItem('academiaClients');
+            const savedBackground = localStorage.getItem('academiaBackground');
+            
+            if (savedUsers) users = JSON.parse(savedUsers);
+            if (savedClients) clients = JSON.parse(savedClients);
+            if (savedBackground) {
+                document.body.style.backgroundImage = `url(${savedBackground})`;
+            }
+        }
+
+        // Salvar dados no localStorage
+        function saveData() {
+            localStorage.setItem('academiaUsers', JSON.stringify(users));
+            localStorage.setItem('academiaClients', JSON.stringify(clients));
+        }
+
+        // Mostrar mensagem
+        function showMessage(elementId, message, isSuccess = true, isWarning = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            if (isWarning) {
+                element.className = 'message warning';
+            } else {
+                element.className = isSuccess ? 'message success' : 'message error';
+            }
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // Gerar ID único
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Funções de navegação
+        function showPage(pageId) {
+            document.querySelectorAll('.container, .panel').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId).style.display = 'block';
+        }
+
+        // Função para mostrar modal
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        // Função para esconder modal
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Funções de usuário
+        function login(email, password) {
+            const user = users.find(u => u.email === email && u.isActive);
+            
+            if (!user) {
+                showMessage('loginMessage', 'Usuário não encontrado ou desativado', false);
+                return;
+            }
+            
+            if (user.password !== password) {
+                showMessage('loginMessage', 'Senha incorreta', false);
+                return;
+            }
+            
+            currentUser = user;
+            saveData();
+            
+            if (user.isAdmin) {
+                // Se for admin, mostra modal para escolher o painel
+                showModal('panelChoiceModal');
+            } else {
+                showPage('clientPanel');
+                renderClientsTable();
+            }
+        }
+
+        function registerUser(name, address, email, password) {
+            if (users.some(u => u.email === email)) {
+                showMessage('registerMessage', 'E-mail já cadastrado', false);
+                return;
+            }
+            
+            if (password.length < 4) {
+                showMessage('registerMessage', 'Senha deve ter pelo menos 4 caracteres', false);
+                return;
+            }
+            
+            const newUser = {
+                id: generateId(),
+                name,
+                address,
+                email,
+                password,
+                isAdmin: false,
+                isActive: true,
+                clientsRegistered: 0
+            };
+            
+            users.push(newUser);
+            saveData();
+            showMessage('registerMessage', 'Cadastro realizado com sucesso!', true);
+            
+            // Faz login automaticamente
+            setTimeout(() => {
+                login(email, password);
+            }, 1500);
+        }
+
+        function saveUser(userData) {
+            if (userData.id) {
+                // Edição de usuário existente
+                const userIndex = users.findIndex(u => u.id === userData.id);
+                if (userIndex === -1) return;
+                
+                users[userIndex] = {
+                    ...users[userIndex],
+                    name: userData.name,
+                    address: userData.address,
+                    email: userData.email,
+                    isAdmin: userData.isAdmin,
+                    isActive: userData.isActive
+                };
+                
+                if (userData.password) {
+                    users[userIndex].password = userData.password;
+                }
+                
+                showMessage('loginMessage', 'Usuário atualizado com sucesso!', true);
+            } else {
+                // Novo usuário
+                if (users.some(u => u.email === userData.email)) {
+                    showMessage('loginMessage', 'E-mail já cadastrado', false);
+                    return;
+                }
+                
+                const newUser = {
+                    id: generateId(),
+                    name: userData.name,
+                    address: userData.address,
+                    email: userData.email,
+                    password: userData.password,
+                    isAdmin: userData.isAdmin,
+                    isActive: userData.isActive,
+                    clientsRegistered: 0
+                };
+                
+                users.push(newUser);
+                showMessage('loginMessage', 'Usuário cadastrado com sucesso!', true);
+            }
+            
+            saveData();
+            renderUsersTable();
+            
+            // Limpar campos e mostrar mensagem específica
+            document.getElementById('userForm').reset();
+            document.getElementById('userFormContainer').style.display = 'none';
+            
+            // Criar e mostrar mensagem de sucesso
+            const successMessage = document.createElement('div');
+            successMessage.className = 'message success';
+            successMessage.textContent = 'Salvo com sucesso!';
+            successMessage.style.marginTop = '10px';
+            
+            const userFormContainer = document.getElementById('userFormContainer');
+            userFormContainer.parentNode.insertBefore(successMessage, userFormContainer.nextSibling);
+            
+            // Remover a mensagem após 3 segundos
+            setTimeout(() => {
+                successMessage.remove();
+            }, 3000);
+        }
+
+        function deleteUser(userId) {
+            if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+            
+            // Não permitir excluir o próprio usuário
+            if (currentUser.id === userId) {
+                showMessage('loginMessage', 'Você não pode excluir seu próprio usuário', false);
+                return;
+            }
+            
+            // Não permitir excluir usuário que tem clientes cadastrados
+            const user = users.find(u => u.id === userId);
+            if (user && user.clientsRegistered > 0) {
+                showMessage('loginMessage', 'Não é possível excluir usuário com clientes cadastrados', false);
+                return;
+            }
+            
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex === -1) return;
+            
+            users.splice(userIndex, 1);
+            saveData();
+            renderUsersTable();
+            selectedUserId = null;
+            document.getElementById('editUserBtn').disabled = true;
+            document.getElementById('deleteUserBtn').disabled = true;
+            document.getElementById('printFormBtn').disabled = true;
+        }
+
+        function recoverPassword(email) {
+            const user = users.find(u => u.email === email);
+            
+            if (!user) {
+                showMessage('recoveryMessage', 'E-mail não encontrado', false);
+                return;
+            }
+            
+            // Simulação de envio de e-mail com token
+            const token = generateToken();
+            showMessage('recoveryMessage', `Token de recuperação enviado para ${email}: ${token} (simulado)`, true);
+            
+            // Em um sistema real, você faria uma chamada para o endpoint Node.js
+            // fetch('/api/recover-password', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ email })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.success) {
+            //         showMessage('recoveryMessage', data.message, true);
+            //     } else {
+            //         showMessage('recoveryMessage', data.message, false);
+            //     }
+            // })
+            // .catch(error => {
+            //     showMessage('recoveryMessage', 'Erro ao tentar recuperar senha', false);
+            //     console.error(error);
+            // });
+        }
+
+        function generateToken() {
+            return Math.random().toString(36).substr(2, 10) + Math.random().toString(36).substr(2, 10);
+        }
+
+        function toggleUserStatus(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            user.isActive = !user.isActive;
+            saveData();
+            renderUsersTable();
+        }
+
+        // Funções de clientes
+        function addClient(clientData) {
+            // Verifica se o cliente já existe (por RG)
+            const existingClient = clients.find(c => c.rg === clientData.rg);
+            if (existingClient) {
+                const registeredBy = users.find(u => u.id === existingClient.registeredBy);
+                const registeredByName = registeredBy ? registeredBy.name : 'Desconhecido';
+                showMessage('loginMessage', `Cliente já cadastrado por: ${registeredByName}`, false);
+                return;
+            }
+            
+            const newClient = {
+                id: generateId(),
+                ...clientData,
+                status: 'Pago',
+                registeredBy: currentUser.id,
+                registrationDate: clientData.registrationDate || new Date().toISOString(),
+                dueDate: clientData.dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            };
+            
+            clients.push(newClient);
+            
+            // Atualiza contador do usuário
+            const user = users.find(u => u.id === currentUser.id);
+            if (user) user.clientsRegistered++;
+            
+            saveData();
+            renderClientsTable();
+            document.getElementById('clientForm').reset();
+        }
+
+        function updateClient(clientId, clientData) {
+            const clientIndex = clients.findIndex(c => c.id === clientId);
+            if (clientIndex === -1) return;
+            
+            clients[clientIndex] = {
+                ...clients[clientIndex],
+                ...clientData
+            };
+            
+            saveData();
+            renderClientsTable();
+            cancelEdit();
+        }
+
+        function adminUpdateClient(clientId, clientData) {
+            const clientIndex = clients.findIndex(c => c.id === clientId);
+            if (clientIndex === -1) return;
+            
+            clients[clientIndex] = {
+                ...clients[clientIndex],
+                ...clientData
+            };
+            
+            saveData();
+            renderAllClientsTable();
+            cancelAdminEdit();
+        }
+
+        function cancelEdit() {
+            isEditingClient = false;
+            currentEditingClientId = null;
+            document.getElementById('clientForm').reset();
+            document.getElementById('saveClientBtn').style.display = 'block';
+            document.getElementById('updateClientBtn').style.display = 'none';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('clientId').value = '';
+        }
+
+        function cancelAdminEdit() {
+            document.getElementById('adminEditForm').style.display = 'none';
+            document.getElementById('adminClientId').value = '';
+            document.getElementById('adminClientForm').reset();
+        }
+
+        function cancelUserEdit() {
+            document.getElementById('userFormContainer').style.display = 'none';
+            document.getElementById('userId').value = '';
+            document.getElementById('userForm').reset();
+            selectedUserId = null;
+            document.getElementById('editUserBtn').disabled = true;
+            document.getElementById('deleteUserBtn').disabled = true;
+            document.getElementById('printFormBtn').disabled = true;
+        }
+
+        function editClient(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            isEditingClient = true;
+            currentEditingClientId = clientId;
+            
+            // Preenche o formulário com os dados do cliente
+            document.getElementById('clientId').value = client.id;
+            document.getElementById('clientName').value = client.name;
+            document.getElementById('clientGender').value = client.gender;
+            document.getElementById('clientRg').value = client.rg;
+            document.getElementById('clientRgOrg').value = client.rgOrg;
+            document.getElementById('clientRgUf').value = client.rgUf;
+            document.getElementById('clientRgDate').value = client.rgDate;
+            document.getElementById('clientAddress').value = client.address;
+            document.getElementById('clientNeighborhood').value = client.neighborhood;
+            document.getElementById('clientCep').value = client.cep;
+            document.getElementById('clientCity').value = client.city;
+            document.getElementById('clientUf').value = client.uf;
+            document.getElementById('clientEmail').value = client.email;
+            document.getElementById('clientPhone').value = client.phone;
+            document.getElementById('clientMonthlyPayment').value = client.monthlyPayment || '';
+            document.getElementById('clientDueDate').value = client.dueDate.split('T')[0];
+            
+            document.getElementById('saveClientBtn').style.display = 'none';
+            document.getElementById('updateClientBtn').style.display = 'block';
+            document.getElementById('cancelEditBtn').style.display = 'block';
+        }
+
+        function adminEditClient(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            // Preenche o formulário de edição do admin
+            document.getElementById('adminClientId').value = client.id;
+            document.getElementById('adminClientName').value = client.name;
+            document.getElementById('adminClientGender').value = client.gender;
+            document.getElementById('adminClientRg').value = client.rg;
+            document.getElementById('adminClientRgOrg').value = client.rgOrg;
+            document.getElementById('adminClientRgUf').value = client.rgUf;
+            document.getElementById('adminClientRgDate').value = client.rgDate;
+            document.getElementById('adminClientAddress').value = client.address;
+            document.getElementById('adminClientNeighborhood').value = client.neighborhood;
+            document.getElementById('adminClientCep').value = client.cep;
+            document.getElementById('adminClientCity').value = client.city;
+            document.getElementById('adminClientUf').value = client.uf;
+            document.getElementById('adminClientEmail').value = client.email;
+            document.getElementById('adminClientPhone').value = client.phone;
+            document.getElementById('adminClientMonthlyPayment').value = client.monthlyPayment || '';
+            document.getElementById('adminClientDueDate').value = client.dueDate.split('T')[0];
+            document.getElementById('adminClientRegistrationDate').value = client.registrationDate.split('T')[0];
+            
+            document.getElementById('adminEditForm').style.display = 'block';
+            
+            // Rola a página até o formulário de edição
+            document.getElementById('adminEditForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            document.getElementById('userFormTitle').textContent = 'Editar Usuário';
+            document.getElementById('userId').value = user.id;
+            document.getElementById('userName').value = user.name;
+            document.getElementById('userAddress').value = user.address;
+            document.getElementById('userEmail').value = user.email;
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userIsAdmin').checked = user.isAdmin;
+            document.getElementById('userIsActive').checked = user.isActive;
+            
+            document.getElementById('userFormContainer').style.display = 'block';
+            document.getElementById('userFormContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Função para mostrar o formulário de inscrição do usuário
+        function showPrintForm(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            const printWindow = document.getElementById('printWindow');
+            const printContent = document.getElementById('printContent');
+            
+            // Limpa o conteúdo anterior
+            printContent.innerHTML = '';
+            
+            // Adiciona os dados do usuário
+            const addDataRow = (label, value) => {
+                const row = document.createElement('div');
+                row.className = 'client-data-row';
+                
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'client-data-label';
+                labelDiv.textContent = label;
+                
+                const valueDiv = document.createElement('div');
+                valueDiv.className = 'client-data-value';
+                valueDiv.textContent = value || '_________________________';
+                
+                row.appendChild(labelDiv);
+                row.appendChild(valueDiv);
+                printContent.appendChild(row);
+            };
+            
+            // Cria o cabeçalho
+            const header = document.createElement('div');
+            header.id = 'printHeader';
+            header.innerHTML = `
+                <h1>FORMULÁRIO DE INSCRIÇÃO</h1>
+                <h2>ACADEMIA BOA FORMA</h2>
+                <h3>BOA VISTA DO GURUPI - MA</h3>
+            `;
+            printContent.insertBefore(header, printContent.firstChild);
+        
+            addDataRow('Nome:', user.name);
+            addDataRow('Endereço:', user.address);
+            addDataRow('E-mail:', user.email);
+            addDataRow('Data de Cadastro:', new Date().toLocaleDateString());
+            
+            // Adiciona linha de assinatura
+            const signature = document.createElement('div');
+            signature.className = 'signature-line';
+            signature.textContent = 'Assinatura do Cliente';
+            printContent.appendChild(signature);
+            
+            // Mostra a janela de impressão
+            printWindow.style.display = 'block';
+        }
+
+        // Função para mostrar o formulário de inscrição do cliente
+        function showClientPrintForm(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            const printWindow = document.getElementById('printWindow');
+            const printContent = document.getElementById('printContent');
+            
+            // Limpa o conteúdo anterior
+            printContent.innerHTML = '';
+            
+            // Cria o cabeçalho
+            const header = document.createElement('div');
+            header.id = 'printHeader';
+            header.innerHTML = `
+                <h1>FORMULÁRIO DE INSCRIÇÃO</h1>
+                <h2>ACADEMIA BOA FORMA</h2>
+                <h3>BOA VISTA DO GURUPI - MA</h3>
+            `;
+            printContent.insertBefore(header, printContent.firstChild);
+            
+            // Adiciona os dados do cliente
+            const addDataRow = (label, value) => {
+                const row = document.createElement('div');
+                row.className = 'client-data-row';
+                
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'client-data-label';
+                labelDiv.textContent = label;
+                
+                const valueDiv = document.createElement('div');
+                valueDiv.className = 'client-data-value';
+                valueDiv.textContent = value || '_________________________';
+                
+                row.appendChild(labelDiv);
+                row.appendChild(valueDiv);
+                printContent.appendChild(row);
+            };
+
+            addDataRow('Nome:', client.name);
+            addDataRow('Sexo:', client.gender);
+            addDataRow('RG:', client.rg);
+            addDataRow('Órgão Emissor:', client.rgOrg);
+            addDataRow('UF:', client.rgUf);
+            addDataRow('Data de Emissão:', new Date(client.rgDate).toLocaleDateString());
+            addDataRow('Endereço:', client.address);
+            addDataRow('Bairro:', client.neighborhood);
+            addDataRow('CEP:', client.cep);
+            addDataRow('Cidade:', client.city);
+            addDataRow('UF:', client.uf);
+            addDataRow('E-mail:', client.email);
+            addDataRow('Contato:', client.phone);
+            addDataRow('Valor da Mensalidade:', client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : '');
+            addDataRow('Data de Cadastro:', new Date(client.registrationDate).toLocaleDateString());
+            addDataRow('Data de Vencimento:', new Date(client.dueDate).toLocaleDateString());
+            
+            // Adiciona linha de assinatura
+            const signature = document.createElement('div');
+            signature.className = 'signature-line';
+            signature.textContent = 'Assinatura do Cliente';
+            printContent.appendChild(signature);
+            
+            // Mostra a janela de impressão
+            printWindow.style.display = 'block';
+        }
+
+        // Função para mostrar o comprovante de pagamento
+        function showPaymentReceipt(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            const printWindow = document.getElementById('printWindow');
+            const printContent = document.getElementById('printContent');
+            
+            // Limpa o conteúdo anterior
+            printContent.innerHTML = '';
+            
+            // Cria o comprovante
+            const receipt = document.createElement('div');
+            receipt.className = 'receipt';
+            
+            // Cabeçalho do comprovante
+            const receiptHeader = document.createElement('div');
+            receiptHeader.className = 'receipt-header';
+            receiptHeader.innerHTML = `
+                <h1>COMPROVANTE DE PAGAMENTO</h1>
+                <h2>ACADEMIA BOA FORMA</h2>
+                <p>Boa Vista do Gurupi - MA</p>
+            `;
+            receipt.appendChild(receiptHeader);
+            
+            // Dados do comprovante
+            const receiptData = document.createElement('div');
+            receiptData.className = 'receipt-data';
+            
+            const addReceiptRow = (label, value) => {
+                const row = document.createElement('div');
+                row.className = 'receipt-data-row';
+                
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'receipt-data-label';
+                labelDiv.textContent = label;
+                
+                const valueDiv = document.createElement('div');
+                valueDiv.className = 'receipt-data-value';
+                valueDiv.textContent = value || '_________________________';
+                
+                row.appendChild(labelDiv);
+                row.appendChild(valueDiv);
+                receiptData.appendChild(row);
+            };
+            
+            addReceiptRow('ID:', client.id.substr(0, 8));
+            addReceiptRow('Nome:', client.name);
+            addReceiptRow('RG:', client.rg);
+            addReceiptRow('Endereço:', client.address);
+            addReceiptRow('Data de Pagamento:', new Date().toLocaleDateString());
+            addReceiptRow('Valor da Mensalidade:', client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : '');
+            
+            receipt.appendChild(receiptData);
+            
+            // Rodapé do comprovante
+            const receiptFooter = document.createElement('div');
+            receiptFooter.className = 'receipt-footer';
+            receiptFooter.innerHTML = `
+                <p>________________________________________</p>
+                <p>Assinatura do Responsável</p>
+            `;
+            
+            const receiptSignature = document.createElement('div');
+            receiptSignature.className = 'receipt-signature';
+            receiptSignature.innerHTML = `
+                <p>________________________________________</p>
+                <p>Assinatura do Cliente</p>
+            `;
+            
+            receipt.appendChild(receiptFooter);
+            receipt.appendChild(receiptSignature);
+            
+            printContent.appendChild(receipt);
+            
+            // Mostra a janela de impressão
+            printWindow.style.display = 'block';
+        }
+
+        function togglePaymentStatus(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            client.status = client.status === 'Pago' ? 'Não Pago' : 'Pago';
+            saveData();
+            
+            if (currentUser.isAdmin) {
+                renderAllClientsTable();
+            } else {
+                renderClientsTable();
+            }
+        }
+
+        function markAllAsPaid() {
+            clients.forEach(client => {
+                if (client.registeredBy === currentUser.id) {
+                    client.status = 'Pago';
+                }
+            });
+            saveData();
+            renderClientsTable();
+        }
+
+        function deleteClient(clientId) {
+            if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
+            
+            const clientIndex = clients.findIndex(c => c.id === clientId);
+            if (clientIndex === -1) return;
+            
+            // Atualiza contador do usuário
+            const client = clients[clientIndex];
+            const user = users.find(u => u.id === client.registeredBy);
+            if (user) user.clientsRegistered--;
+            
+            clients.splice(clientIndex, 1);
+            saveData();
+            
+            if (currentUser.isAdmin) {
+                renderAllClientsTable();
+            } else {
+                renderClientsTable();
+            }
+        }
+
+        function checkDueDate(dueDate, registrationDate) {
+            const due = new Date(dueDate);
+            const registration = new Date(registrationDate);
+            const today = new Date();
+            
+            // Calcula a diferença em dias entre a data de cadastro e a data de vencimento
+            const diffTime = due.getTime() - registration.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Calcula dias restantes até o vencimento
+            const daysRemaining = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            
+            // Se passou do vencimento, marca como não pago
+            if (today > due) {
+                return { status: 'overdue', days: diffDays };
+            }
+            // Se faltam 5 dias ou menos para vencer
+            else if (daysRemaining <= 5) {
+                return { status: 'warning', days: diffDays };
+            }
+            // Se está dentro do prazo
+            else {
+                return { status: 'paid', days: diffDays };
+            }
+        }
+
+        function changeBackground(imageFile) {
+            if (!imageFile) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageUrl = e.target.result;
+                document.body.style.backgroundImage = `url(${imageUrl})`;
+                localStorage.setItem('academiaBackground', imageUrl);
+            };
+            reader.readAsDataURL(imageFile);
+        }
+
+        function resetBackground() {
+            document.body.style.backgroundImage = '';
+            localStorage.removeItem('academiaBackground');
+        }
+
+        // Função para fazer backup dos dados
+        function createBackup() {
+            const backupData = {
+                users: users,
+                clients: clients,
+                background: localStorage.getItem('academiaBackground')
+            };
+            
+            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_academia_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('loginMessage', 'Backup criado com sucesso!', true);
+        }
+
+        // Função para restaurar backup
+        function restoreBackup() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.txt';
+            
+            fileInput.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const backupData = JSON.parse(event.target.result);
+                        
+                        if (!backupData.users || !backupData.clients) {
+                            showMessage('loginMessage', 'Arquivo de backup inválido', false);
+                            return;
+                        }
+                        
+                        if (confirm('Tem certeza que deseja restaurar o backup? Todos os dados atuais serão substituídos.')) {
+                            users = backupData.users;
+                            clients = backupData.clients;
+                            
+                            if (backupData.background) {
+                                localStorage.setItem('academiaBackground', backupData.background);
+                                document.body.style.backgroundImage = `url(${backupData.background})`;
+                            } else {
+                                localStorage.removeItem('academiaBackground');
+                                document.body.style.backgroundImage = '';
+                            }
+                            
+                            saveData();
+                            
+                            if (currentUser) {
+                                if (currentUser.isAdmin) {
+                                    renderUsersTable();
+                                    renderAllClientsTable();
+                                } else {
+                                    renderClientsTable();
+                                }
+                            }
+                            
+                            showMessage('loginMessage', 'Backup restaurado com sucesso!', true);
+                        }
+                    } catch (error) {
+                        showMessage('loginMessage', 'Erro ao ler o arquivo de backup', false);
+                        console.error(error);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            fileInput.click();
+        }
+
+        // Função para alterar o administrador padrão
+        function changeAdmin() {
+            document.getElementById('changeAdminForm').style.display = 'block';
+            document.getElementById('newAdminEmail').value = '';
+            document.getElementById('newAdminPassword').value = '';
+        }
+
+        function confirmAdminChange() {
+            const newEmail = document.getElementById('newAdminEmail').value;
+            const newPassword = document.getElementById('newAdminPassword').value;
+            
+            if (!newEmail || !newPassword) {
+                showMessage('loginMessage', 'Preencha todos os campos', false);
+                return;
+            }
+            
+            // Encontra o admin padrão
+            const admin = users.find(u => u.email === 'admin@admin.com');
+            if (admin) {
+                admin.email = newEmail;
+                admin.password = newPassword;
+                saveData();
+                showMessage('loginMessage', 'Administrador padrão alterado com sucesso!', true);
+                document.getElementById('changeAdminForm').style.display = 'none';
+            } else {
+                showMessage('loginMessage', 'Administrador padrão não encontrado', false);
+            }
+        }
+
+        // Funções de renderização
+        function renderClientsTable(filter = '') {
+            const tbody = document.getElementById('clientsTableBody');
+            tbody.innerHTML = '';
+            
+            let userClients = clients.filter(c => c.registeredBy === currentUser.id);
+            
+            if (filter) {
+                const searchTerm = filter.toLowerCase();
+                userClients = userClients.filter(c => 
+                    c.name.toLowerCase().includes(searchTerm) || 
+                    c.rg.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            userClients.forEach(client => {
+                const registrationDate = new Date(client.registrationDate);
+                const dueDate = new Date(client.dueDate);
+                const dueStatus = checkDueDate(client.dueDate, client.registrationDate);
+                
+                // Se passou do vencimento, marca como não pago
+                if (dueStatus.status === 'overdue' && client.status === 'Pago') {
+                    client.status = 'Não Pago';
+                    saveData();
+                }
+                
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${client.id.substr(0, 8)}</td>
+                    <td>${client.name}</td>
+                    <td>${client.gender}</td>
+                    <td>${client.rg}</td>
+                    <td>${client.phone}</td>
+                    <td class="status-${client.status === 'Pago' ? 'paid' : 'unpaid'}" 
+                        onclick="togglePaymentStatus('${client.id}')">
+                        ${client.status}
+                    </td>
+                    <td>${registrationDate.toLocaleDateString()}</td>
+                    <td style="color: ${
+                        dueStatus.status === 'overdue' ? 'red' : 
+                        dueStatus.status === 'warning' ? '#FFA500' : 
+                        'green'
+                    }; font-weight: bold;">
+                        ${dueDate.toLocaleDateString()}
+                    </td>
+                    <td>${client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : ''}</td>
+                    <td class="actions">
+                        <button onclick="editClient('${client.id}')">Editar</button>
+                        <button onclick="deleteClient('${client.id}')">Excluir</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderUsersTable(filter = '') {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            let filteredUsers = [...users];
+            
+            if (filter) {
+                const searchTerm = filter.toLowerCase();
+                filteredUsers = filteredUsers.filter(u => 
+                    u.name.toLowerCase().includes(searchTerm) || 
+                    u.email.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            filteredUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.dataset.userId = user.id;
+                
+                row.innerHTML = `
+                    <td>${user.id.substr(0, 8)}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.isActive ? 'Ativo' : 'Inativo'}</td>
+                    <td>${user.clientsRegistered}</td>
+                    <td>${user.isAdmin ? 'Sim' : 'Não'}</td>
+                `;
+                
+                row.addEventListener('click', () => {
+                    // Remove a seleção de todas as linhas
+                    document.querySelectorAll('#usersTableBody tr').forEach(r => {
+                        r.classList.remove('selected-row');
+                    });
+                    
+                    // Adiciona a seleção na linha clicada
+                    row.classList.add('selected-row');
+                    selectedUserId = user.id;
+                    document.getElementById('editUserBtn').disabled = false;
+                    document.getElementById('deleteUserBtn').disabled = false;
+                    document.getElementById('printFormBtn').disabled = false;
+                });
+                
+                tbody.appendChild(row);
+            });
+            
+            // Atualiza filtro de usuários
+            const userFilter = document.getElementById('userFilter');
+            userFilter.innerHTML = '<option value="">Filtrar por usuário</option>';
+            
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${user.name} (${user.clientsRegistered})`;
+                userFilter.appendChild(option);
+            });
+        }
+
+        function renderAllClientsTable(userFilter = '', searchFilter = '') {
+            const tbody = document.getElementById('allClientsTableBody');
+            tbody.innerHTML = '';
+            
+            let filteredClients = [...clients];
+            
+            if (userFilter) {
+                filteredClients = filteredClients.filter(c => c.registeredBy === userFilter);
+            }
+            
+            if (searchFilter) {
+                const searchTerm = searchFilter.toLowerCase();
+                filteredClients = filteredClients.filter(c => 
+                    c.name.toLowerCase().includes(searchTerm) || 
+                    c.rg.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            filteredClients.forEach(client => {
+                const registeredBy = users.find(u => u.id === client.registeredBy);
+                const registeredByName = registeredBy ? registeredBy.name : 'Desconhecido';
+                const registrationDate = new Date(client.registrationDate);
+                const dueDate = new Date(client.dueDate);
+                const dueStatus = checkDueDate(client.dueDate, client.registrationDate);
+                
+                // Se passou do vencimento, marca como não pago
+                if (dueStatus.status === 'overdue' && client.status === 'Pago') {
+                    client.status = 'Não Pago';
+                    saveData();
+                }
+                
+                const row = document.createElement('tr');
+                row.dataset.clientId = client.id;
+                
+                row.innerHTML = `
+                    <td>${client.id.substr(0, 8)}</td>
+                    <td>${client.name}</td>
+                    <td>${client.rg}</td>
+                    <td>${client.phone}</td>
+                    <td class="status-${client.status === 'Pago' ? 'paid' : 'unpaid'}" 
+                        onclick="togglePaymentStatus('${client.id}')">
+                        ${client.status}
+                    </td>
+                    <td>${registrationDate.toLocaleDateString()}</td>
+                    <td style="color: ${
+                        dueStatus.status === 'overdue' ? 'red' : 
+                        dueStatus.status === 'warning' ? '#FFA500' : 
+                        'green'
+                    }; font-weight: bold;">
+                        ${dueDate.toLocaleDateString()}
+                    </td>
+                    <td>${client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : ''}</td>
+                    <td>${registeredByName}</td>
+                    <td class="actions">
+                        <button onclick="adminEditClient('${client.id}')">Editar</button>
+                        <button onclick="deleteClient('${client.id}')">Excluir</button>
+                    </td>
+                `;
+                
+                row.addEventListener('click', (e) => {
+                    // Evita a seleção quando clica nos botões de ação
+                    if (e.target.tagName === 'BUTTON') return;
+                    
+                    // Remove a seleção de todas as linhas
+                    document.querySelectorAll('#allClientsTableBody tr').forEach(r => {
+                        r.classList.remove('selected-row');
+                    });
+                    
+                    // Adiciona a seleção na linha clicada
+                    row.classList.add('selected-row');
+                    selectedClientId = client.id;
+                    document.getElementById('printClientFormBtn').disabled = false;
+                    document.getElementById('printReceiptBtn').disabled = false;
+                });
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Exportar para Excel
+        function exportToExcel() {
+            let csv = 'ID,Nome,Sexo,RG,Contato,Status,Data Cadastro,Data Vencimento,Valor,Endereço,Bairro,Cidade,UF,CEP,E-mail\n';
+            
+            const userClients = clients.filter(c => c.registeredBy === currentUser.id);
+            
+            userClients.forEach(client => {
+                const registrationDate = new Date(client.registrationDate);
+                const dueDate = new Date(client.dueDate);
+                csv += `"${client.id.substr(0, 8)}","${client.name}","${client.gender}","${client.rg}","${client.phone}",`;
+                csv += `"${client.status}","${registrationDate.toLocaleDateString()}","${dueDate.toLocaleDateString()}","${client.monthlyPayment || ''}","${client.address}","${client.neighborhood}","${client.city}",`;
+                csv += `"${client.uf}","${client.cep}","${client.email}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `clientes_academia_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            showPage('loginPage');
+            
+            // Desabilitar botões de impressão inicialmente
+            document.getElementById('printFormBtn').disabled = true;
+            document.getElementById('printClientFormBtn').disabled = true;
+            document.getElementById('printReceiptBtn').disabled = true;
+            
+            // Login
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                login(email, password);
+            });
+            
+            // Cadastro de usuário
+            document.getElementById('registerForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('registerName').value;
+                const address = document.getElementById('registerAddress').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    showMessage('registerMessage', 'As senhas não coincidem', false);
+                    return;
+                }
+                
+                registerUser(name, address, email, password);
+            });
+            
+            // Recuperação de senha
+            document.getElementById('recoveryForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('recoveryEmail').value;
+                recoverPassword(email);
+            });
+            
+            // Cadastro/Edição de cliente
+            document.getElementById('clientForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const clientData = {
+                    name: document.getElementById('clientName').value,
+                    gender: document.getElementById('clientGender').value,
+                    rg: document.getElementById('clientRg').value,
+                    rgOrg: document.getElementById('clientRgOrg').value,
+                    rgUf: document.getElementById('clientRgUf').value,
+                    rgDate: document.getElementById('clientRgDate').value,
+                    address: document.getElementById('clientAddress').value,
+                    neighborhood: document.getElementById('clientNeighborhood').value,
+                    cep: document.getElementById('clientCep').value,
+                    city: document.getElementById('clientCity').value,
+                    uf: document.getElementById('clientUf').value,
+                    email: document.getElementById('clientEmail').value,
+                    phone: document.getElementById('clientPhone').value,
+                    monthlyPayment: document.getElementById('clientMonthlyPayment').value,
+                    dueDate: document.getElementById('clientDueDate').value
+                };
+                
+                if (isEditingClient) {
+                    updateClient(currentEditingClientId, clientData);
+                } else {
+                    addClient(clientData);
+                }
+            });
+            
+            // Botão de atualizar cliente
+            document.getElementById('updateClientBtn').addEventListener('click', () => {
+                const clientData = {
+                    name: document.getElementById('clientName').value,
+                    gender: document.getElementById('clientGender').value,
+                    rg: document.getElementById('clientRg').value,
+                    rgOrg: document.getElementById('clientRgOrg').value,
+                    rgUf: document.getElementById('clientRgUf').value,
+                    rgDate: document.getElementById('clientRgDate').value,
+                    address: document.getElementById('clientAddress').value,
+                    neighborhood: document.getElementById('clientNeighborhood').value,
+                    cep: document.getElementById('clientCep').value,
+                    city: document.getElementById('clientCity').value,
+                    uf: document.getElementById('clientUf').value,
+                    email: document.getElementById('clientEmail').value,
+                    phone: document.getElementById('clientPhone').value,
+                    monthlyPayment: document.getElementById('clientMonthlyPayment').value,
+                    dueDate: document.getElementById('clientDueDate').value
+                };
+                
+                updateClient(currentEditingClientId, clientData);
+            });
+            
+            // Botão de atualizar cliente no admin
+            document.getElementById('adminUpdateClientBtn').addEventListener('click', () => {
+                const clientData = {
+                    name: document.getElementById('adminClientName').value,
+                    gender: document.getElementById('adminClientGender').value,
+                    rg: document.getElementById('adminClientRg').value,
+                    rgOrg: document.getElementById('adminClientRgOrg').value,
+                    rgUf: document.getElementById('adminClientRgUf').value,
+                    rgDate: document.getElementById('adminClientRgDate').value,
+                    address: document.getElementById('adminClientAddress').value,
+                    neighborhood: document.getElementById('adminClientNeighborhood').value,
+                    cep: document.getElementById('adminClientCep').value,
+                    city: document.getElementById('adminClientCity').value,
+                    uf: document.getElementById('adminClientUf').value,
+                    email: document.getElementById('adminClientEmail').value,
+                    phone: document.getElementById('adminClientPhone').value,
+                    monthlyPayment: document.getElementById('adminClientMonthlyPayment').value,
+                    dueDate: document.getElementById('adminClientDueDate').value,
+                    registrationDate: document.getElementById('adminClientRegistrationDate').value
+                };
+                
+                const clientId = document.getElementById('adminClientId').value;
+                adminUpdateClient(clientId, clientData);
+            });
+            
+            // Botão de salvar usuário
+            document.getElementById('saveUserBtn').addEventListener('click', () => {
+                const userData = {
+                    id: document.getElementById('userId').value,
+                    name: document.getElementById('userName').value,
+                    address: document.getElementById('userAddress').value,
+                    email: document.getElementById('userEmail').value,
+                    password: document.getElementById('userPassword').value,
+                    isAdmin: document.getElementById('userIsAdmin').checked,
+                    isActive: document.getElementById('userIsActive').checked
+                };
+                
+                saveUser(userData);
+            });
+            
+            // Botão de cancelar edição
+            document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+            
+            // Botão de cancelar edição no admin
+            document.getElementById('adminCancelEditBtn').addEventListener('click', cancelAdminEdit);
+            
+            // Botão de cancelar edição de usuário
+            document.getElementById('cancelUserBtn').addEventListener('click', cancelUserEdit);
+            
+            // Botão de imprimir formulário de usuário
+            document.getElementById('printFormBtn').addEventListener('click', () => {
+                if (selectedUserId) {
+                    showPrintForm(selectedUserId);
+                }
+            });
+            
+            // Botão de imprimir formulário de cliente
+            document.getElementById('printClientFormBtn').addEventListener('click', () => {
+                if (selectedClientId) {
+                    showClientPrintForm(selectedClientId);
+                }
+            });
+            
+            // Botão de imprimir comprovante
+            document.getElementById('printReceiptBtn').addEventListener('click', () => {
+                if (selectedClientId) {
+                    showPaymentReceipt(selectedClientId);
+                }
+            });
+            
+            // Navegação
+            document.getElementById('registerLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('registerPage');
+            });
+            
+            document.getElementById('backToLogin').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('loginPage');
+            });
+            
+            document.getElementById('forgotPassword').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('recoveryPage');
+            });
+            
+            document.getElementById('backToLoginFromRecovery').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('loginPage');
+            });
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                currentUser = null;
+                showPage('loginPage');
+            });
+            
+            document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+                currentUser = null;
+                showPage('loginPage');
+            });
+            
+            // Ações de clientes
+            document.getElementById('markAllPaid').addEventListener('click', () => {
+                markAllAsPaid();
+            });
+            
+            document.getElementById('searchClient').addEventListener('click', () => {
+                const filter = document.getElementById('clientSearch').value;
+                renderClientsTable(filter);
+            });
+            
+            document.getElementById('clearSearch').addEventListener('click', () => {
+                document.getElementById('clientSearch').value = '';
+                renderClientsTable();
+            });
+            
+            document.getElementById('exportExcel').addEventListener('click', () => {
+                exportToExcel();
+            });
+            
+            document.getElementById('clearTable').addEventListener('click', () => {
+                if (confirm('Tem certeza que deseja limpar todos os clientes?')) {
+                    clients = clients.filter(c => c.registeredBy !== currentUser.id);
+                    saveData();
+                    renderClientsTable();
+                }
+            });
+            
+            // Ações de administração
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    button.classList.add('active');
+                    const tabId = button.dataset.tab;
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    if (tabId === 'usersTab') {
+                        renderUsersTable();
+                    } else if (tabId === 'allClientsTab') {
+                        renderAllClientsTable();
+                    }
+                });
+            });
+            
+            document.getElementById('adminSearchClient').addEventListener('click', () => {
+                const userFilter = document.getElementById('userFilter').value;
+                const searchFilter = document.getElementById('adminClientSearch').value;
+                renderAllClientsTable(userFilter, searchFilter);
+            });
+            
+            document.getElementById('adminClearSearch').addEventListener('click', () => {
+                document.getElementById('userFilter').value = '';
+                document.getElementById('adminClientSearch').value = '';
+                renderAllClientsTable();
+            });
+            
+            document.getElementById('searchUserBtn').addEventListener('click', () => {
+                const filter = document.getElementById('userSearch').value;
+                renderUsersTable(filter);
+            });
+            
+            document.getElementById('clearUserSearchBtn').addEventListener('click', () => {
+                document.getElementById('userSearch').value = '';
+                renderUsersTable();
+            });
+            
+            document.getElementById('addUserBtn').addEventListener('click', () => {
+                document.getElementById('userFormTitle').textContent = 'Cadastrar Novo Usuário';
+                document.getElementById('userForm').reset();
+                document.getElementById('userId').value = '';
+                document.getElementById('userFormContainer').style.display = 'block';
+                document.getElementById('userFormContainer').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            document.getElementById('editUserBtn').addEventListener('click', () => {
+                if (selectedUserId) {
+                    editUser(selectedUserId);
+                }
+            });
+            
+            document.getElementById('deleteUserBtn').addEventListener('click', () => {
+                if (selectedUserId) {
+                    deleteUser(selectedUserId);
+                }
+            });
+            
+            document.getElementById('changeBackgroundBtn').addEventListener('click', () => {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.onchange = (e) => {
+                    if (e.target.files.length > 0) {
+                        changeBackground(e.target.files[0]);
+                    }
+                };
+                fileInput.click();
+            });
+            
+            // Botão de backup
+            document.getElementById('backupBtn').addEventListener('click', createBackup);
+            
+            // Botão de restaurar backup
+            document.getElementById('restoreBtn').addEventListener('click', restoreBackup);
+            
+            // Botão para exibir usuários cadastrados
+            document.getElementById('showUsersBtn').addEventListener('click', () => {
+                renderUsersTable();
+                document.querySelector('.tab-button[data-tab="usersTab"]').click();
+            });
+            
+            // Botão para alterar admin
+            document.getElementById('changeAdminBtn').addEventListener('click', changeAdmin);
+            
+            // Botão para confirmar alteração de admin
+            document.getElementById('confirmAdminChange').addEventListener('click', confirmAdminChange);
+            
+            // Botão para cancelar alteração de admin
+            document.getElementById('cancelAdminChange').addEventListener('click', () => {
+                document.getElementById('changeAdminForm').style.display = 'none';
+            });
+            
+            // Escolha de painel para admin
+            document.getElementById('chooseClientPanel').addEventListener('click', () => {
+                hideModal('panelChoiceModal');
+                showPage('clientPanel');
+                renderClientsTable();
+            });
+            
+            document.getElementById('chooseAdminPanel').addEventListener('click', () => {
+                hideModal('panelChoiceModal');
+                showPage('adminPanel');
+                renderUsersTable();
+                renderAllClientsTable();
+            });
+        });
+    </script>
+</body>
+</html>
