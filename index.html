@@ -507,6 +507,20 @@
                 width: 100%;
             }
         }
+
+        /* Estilo para os botões "Editar" e "Excluir" no painel de administração */
+        #allClientsTable .actions button {
+            padding: 4px 8px; /* Reduz o padding */
+            font-size: 10px; /* Reduz o tamanho da fonte */
+            min-width: 60px; /* Define uma largura mínima menor */
+        }
+
+        /* Estilo para os botões "Editar" e "Excluir" na lista de clientes no painel de administração */
+        #allClientsTable .actions button {
+            padding: 4px 6px; /* Reduz o padding */
+            font-size: 10px; /* Reduz o tamanho da fonte */
+            min-width: 50px; /* Define uma largura mínima menor */
+        }
     </style>
 </head>
 <body id="mainBody">
@@ -547,6 +561,18 @@
             <button type="button" id="backToLoginFromRecovery" class="link-button">Voltar para login</button>
         </form>
         <div id="recoveryMessage" class="message" style="display: none;"></div>
+    </div>
+
+    <!-- Página de Redefinição de Senha -->
+    <div id="resetPasswordPage" class="container" style="display:none;">
+        <h2>Redefinir Senha</h2>
+        <form id="resetPasswordForm">
+            <input type="hidden" id="resetToken">
+            <input type="password" id="newPassword" placeholder="Nova Senha" required>
+            <input type="password" id="confirmNewPassword" placeholder="Confirmar Nova Senha" required>
+            <button type="submit">Redefinir Senha</button>
+        </form>
+        <div id="resetPasswordMessage" class="message" style="display: none;"></div>
     </div>
 
     <!-- Modal de escolha de painel -->
@@ -1211,35 +1237,44 @@
         }
 
         function recoverPassword(email) {
-            const user = users.find(u => u.email === email);
-            
-            if (!user) {
-                showMessage('recoveryMessage', 'E-mail não encontrado', false);
-                return;
-            }
-            
-            // Simulação de envio de e-mail com token
-            const token = generateToken();
-            showMessage('recoveryMessage', `Token de recuperação enviado para ${email}: ${token} (simulado)`, true);
-            
-            // Em um sistema real, você faria uma chamada para o endpoint Node.js
-            // fetch('/api/recover-password', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email })
-            // })
-            // .then(response => response.json())
-            // .then(data => {
-            //     if (data.success) {
-            //         showMessage('recoveryMessage', data.message, true);
-            //     } else {
-            //         showMessage('recoveryMessage', data.message, false);
-            //     }
-            // })
-            // .catch(error => {
-            //     showMessage('recoveryMessage', 'Erro ao tentar recuperar senha', false);
-            //     console.error(error);
-            // });
+            fetch('/api/recover-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('recoveryMessage', data.message, true);
+                } else {
+                    showMessage('recoveryMessage', data.message, false);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                showMessage('recoveryMessage', 'Erro ao tentar recuperar senha.', false);
+            });
+        }
+
+        function resetPassword(token, newPassword) {
+            fetch('/api/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, newPassword })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    showPage('loginPage');
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao redefinir senha.');
+            });
         }
 
         function generateToken() {
@@ -2030,6 +2065,21 @@
                 e.preventDefault();
                 const email = document.getElementById('recoveryEmail').value;
                 recoverPassword(email);
+            });
+
+            // Redefinição de senha
+            document.getElementById('resetPasswordForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const token = document.getElementById('resetToken').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+                if (newPassword !== confirmNewPassword) {
+                    showMessage('resetPasswordMessage', 'As senhas não coincidem.', false);
+                    return;
+                }
+
+                resetPassword(token, newPassword);
             });
             
             // Cadastro/Edição de cliente
