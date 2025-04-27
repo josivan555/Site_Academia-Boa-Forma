@@ -73,20 +73,20 @@
 
         .status-paid {
             color: green;
-            cursor: pointer;
             font-weight: bold;
+            cursor: pointer;
         }
 
         .status-unpaid {
             color: red;
-            cursor: pointer;
             font-weight: bold;
+            cursor: pointer;
         }
 
         .status-warning {
-            color: #FFA500;
-            cursor: pointer;
+            color: #FFA500; /* Amarelo */
             font-weight: bold;
+            cursor: pointer;
         }
 
         table {
@@ -516,10 +516,17 @@
         }
 
         /* Estilo para os botões "Editar" e "Excluir" na lista de clientes no painel de administração */
+        #allClientsTable .actions {
+            display: flex; /* Exibe os botões em linha */
+            gap: 5px; /* Espaçamento entre os botões */
+            justify-content: center; /* Centraliza os botões horizontalmente */
+        }
+
         #allClientsTable .actions button {
-            padding: 4px 6px; /* Reduz o padding */
+            padding: 4px 8px; /* Reduz o padding */
             font-size: 10px; /* Reduz o tamanho da fonte */
             min-width: 50px; /* Define uma largura mínima menor */
+            border-radius: 4px; /* Bordas arredondadas */
         }
 
         /* Estilo para as opções de background */
@@ -1693,10 +1700,12 @@
         function togglePaymentStatus(clientId) {
             const client = clients.find(c => c.id === clientId);
             if (!client) return;
-            
+
+            // Alterna entre "Pago" e "Não Pago"
             client.status = client.status === 'Pago' ? 'Não Pago' : 'Pago';
             saveData();
-            
+
+            // Atualiza a tabela com base no tipo de usuário
             if (currentUser.isAdmin) {
                 renderAllClientsTable();
             } else {
@@ -2003,6 +2012,19 @@
                 const registeredByName = registeredBy ? registeredBy.name : 'Desconhecido';
                 const registrationDate = new Date(client.registrationDate);
                 const dueDate = new Date(client.dueDate);
+                const today = new Date();
+
+                // Calcula os dias restantes para o vencimento
+                const daysRemaining = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+
+                // Define a cor e o status com base no vencimento
+                let statusColor = 'green';
+                if (daysRemaining <= 5 && daysRemaining > 0) {
+                    statusColor = '#FFA500'; // Amarelo
+                } else if (daysRemaining <= 0) {
+                    statusColor = 'red'; // Vermelho
+                    client.status = 'Não Pago'; // Atualiza o status automaticamente
+                }
 
                 const row = document.createElement('tr');
                 row.dataset.clientId = client.id;
@@ -2012,12 +2034,14 @@
                     <td>${client.name}</td>
                     <td>${client.rg}</td>
                     <td>${client.phone}</td>
-                    <td>${client.status}</td>
+                    <td style="color: ${statusColor}; font-weight: bold;" onclick="togglePaymentStatus('${client.id}')">
+                        ${client.status}
+                    </td>
                     <td>${registrationDate.toLocaleDateString()}</td>
                     <td>${dueDate.toLocaleDateString()}</td>
                     <td>${client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : ''}</td>
                     <td>${registeredByName}</td>
-                    <td>
+                    <td class="actions">
                         <button onclick="adminEditClient('${client.id}')">Editar</button>
                         <button onclick="deleteClient('${client.id}')">Excluir</button>
                     </td>
