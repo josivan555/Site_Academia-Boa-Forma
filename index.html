@@ -232,11 +232,17 @@
         }
 
         .admin-actions {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            gap: 10px;
+            display: flex; /* Exibe os botões em linha */
+            justify-content: center; /* Centraliza os botões horizontalmente */
+            gap: 10px; /* Espaçamento entre os botões */
+            margin-top: 20px; /* Espaçamento acima dos botões */
+            margin-bottom: 20px; /* Espaçamento abaixo dos botões */
+        }
+
+        .admin-actions button {
+            font-size: 12px; /* Reduz o tamanho da fonte */
+            padding: 8px 12px; /* Ajusta o padding dos botões */
+            min-width: 100px; /* Define uma largura mínima para os botões */
         }
 
         .edit-form-container {
@@ -394,59 +400,49 @@
 
         /* Estilo para o comprovante de pagamento */
         .receipt {
-            font-family: Arial, sans-serif;
-            border: 2px solid #000;
-            padding: 20px;
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 400px; /* Define uma largura fixa para o recibo */
+            margin: 20px auto; /* Centraliza horizontalmente */
+            padding: 20px; /* Adiciona espaçamento interno */
+            border: 2px solid #000; /* Adiciona uma borda preta */
+            border-radius: 8px; /* Arredonda os cantos */
+            background-color: #fff; /* Fundo branco */
+            font-family: Arial, sans-serif; /* Define a fonte */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona sombra */
         }
 
         .receipt-header {
-            text-align: center;
-            margin-bottom: 20px;
+            text-align: center; /* Centraliza o texto */
+            margin-bottom: 20px; /* Espaçamento abaixo do cabeçalho */
         }
 
         .receipt-header h1 {
+            font-size: 18px; /* Tamanho do título */
             margin: 0;
-            font-size: 24px;
         }
 
         .receipt-header h2 {
+            font-size: 14px; /* Tamanho do subtítulo */
             margin: 5px 0;
-            font-size: 18px;
-        }
-
-        .receipt-data {
-            margin-bottom: 20px;
         }
 
         .receipt-data-row {
-            display: flex;
-            margin-bottom: 10px;
-        }
-
-        .receipt-data-label {
-            flex: 1;
-            font-weight: bold;
-        }
-
-        .receipt-data-value {
-            flex: 2;
-            border-bottom: 1px solid #000;
-            padding-bottom: 3px;
+            display: flex; /* Organiza os dados em linha */
+            justify-content: space-between; /* Espaça os elementos */
+            margin-bottom: 10px; /* Espaçamento entre as linhas */
         }
 
         .receipt-footer {
-            margin-top: 40px;
-            text-align: center;
+            text-align: center; /* Centraliza o texto */
+            margin-top: 20px; /* Espaçamento acima do rodapé */
+            font-size: 12px; /* Tamanho menor para o rodapé */
         }
 
         .receipt-signature {
-            border-top: 1px solid #000;
-            width: 60%;
-            margin: 40px auto 0;
-            padding-top: 10px;
-            text-align: center;
+            text-align: center; /* Centraliza o texto */
+            margin-top: 30px; /* Espaçamento acima da assinatura */
+            border-top: 1px solid #000; /* Linha para assinatura */
+            padding-top: 10px; /* Espaçamento acima da linha */
+            font-size: 12px; /* Tamanho menor para a assinatura */
         }
 
         /* Responsividade para dispositivos móveis */
@@ -1517,17 +1513,17 @@
         function showPaymentReceipt(clientId) {
             const client = clients.find(c => c.id === clientId);
             if (!client) return;
-            
+
             const printWindow = document.getElementById('printWindow');
             const printContent = document.getElementById('printContent');
-            
+
             // Limpa o conteúdo anterior
             printContent.innerHTML = '';
-            
+
             // Cria o comprovante
             const receipt = document.createElement('div');
             receipt.className = 'receipt';
-            
+
             // Cabeçalho do comprovante
             const receiptHeader = document.createElement('div');
             receiptHeader.className = 'receipt-header';
@@ -1537,57 +1533,46 @@
                 <p>Boa Vista do Gurupi - MA</p>
             `;
             receipt.appendChild(receiptHeader);
-            
+
             // Dados do comprovante
-            const receiptData = document.createElement('div');
-            receiptData.className = 'receipt-data';
-            
             const addReceiptRow = (label, value) => {
                 const row = document.createElement('div');
                 row.className = 'receipt-data-row';
-                
+
                 const labelDiv = document.createElement('div');
-                labelDiv.className = 'receipt-data-label';
                 labelDiv.textContent = label;
-                
+
                 const valueDiv = document.createElement('div');
-                valueDiv.className = 'receipt-data-value';
                 valueDiv.textContent = value || '_________________________';
-                
+
                 row.appendChild(labelDiv);
                 row.appendChild(valueDiv);
-                receiptData.appendChild(row);
+                receipt.appendChild(row);
             };
-            
+
             addReceiptRow('ID:', client.id.substr(0, 8));
             addReceiptRow('Nome:', client.name);
             addReceiptRow('RG:', client.rg);
             addReceiptRow('Endereço:', client.address);
             addReceiptRow('Data de Pagamento:', new Date().toLocaleDateString());
             addReceiptRow('Valor da Mensalidade:', client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : '');
-            
-            receipt.appendChild(receiptData);
-            
+
             // Rodapé do comprovante
             const receiptFooter = document.createElement('div');
             receiptFooter.className = 'receipt-footer';
             receiptFooter.innerHTML = `
-                <p>________________________________________</p>
-                <p>Assinatura do Responsável</p>
+                <p>Obrigado por escolher a Academia Boa Forma!</p>
             `;
-            
+            receipt.appendChild(receiptFooter);
+
+            // Assinatura
             const receiptSignature = document.createElement('div');
             receiptSignature.className = 'receipt-signature';
-            receiptSignature.innerHTML = `
-                <p>________________________________________</p>
-                <p>Assinatura do Cliente</p>
-            `;
-            
-            receipt.appendChild(receiptFooter);
+            receiptSignature.textContent = 'Assinatura do Cliente';
             receipt.appendChild(receiptSignature);
-            
+
             printContent.appendChild(receipt);
-            
+
             // Mostra a janela de impressão
             printWindow.style.display = 'block';
         }
@@ -1845,60 +1830,34 @@
             });
         }
 
-        function renderUsersTable(filter = '') {
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-            
-            let filteredUsers = [...users];
-            
-            if (filter) {
-                const searchTerm = filter.toLowerCase();
-                filteredUsers = filteredUsers.filter(u => 
-                    u.name.toLowerCase().includes(searchTerm) || 
-                    u.email.toLowerCase().includes(searchTerm)
-                );
+        function renderUsersTable() {
+            const usersTableContainer = document.getElementById('usersTableContainer');
+            const usersTableBody = document.getElementById('usersTableBody');
+
+            // Limpa o conteúdo anterior da tabela
+            usersTableBody.innerHTML = '';
+
+            // Verifica se há usuários cadastrados
+            if (users.length === 0) {
+                usersTableBody.innerHTML = '<tr><td colspan="5">Nenhum usuário cadastrado.</td></tr>';
+                return;
             }
-            
-            filteredUsers.forEach(user => {
+
+            // Adiciona os usuários à tabela
+            users.forEach(user => {
                 const row = document.createElement('tr');
-                row.dataset.userId = user.id;
-                
                 row.innerHTML = `
-                    <td>${user.id.substr(0, 8)}</td>
+                    <td>${user.id}</td>
                     <td>${user.name}</td>
                     <td>${user.email}</td>
                     <td>${user.isActive ? 'Ativo' : 'Inativo'}</td>
-                    <td>${user.clientsRegistered}</td>
                     <td>${user.isAdmin ? 'Sim' : 'Não'}</td>
                 `;
-                
-                row.addEventListener('click', () => {
-                    // Remove a seleção de todas as linhas
-                    document.querySelectorAll('#usersTableBody tr').forEach(r => {
-                        r.classList.remove('selected-row');
-                    });
-                    
-                    // Adiciona a seleção na linha clicada
-                    row.classList.add('selected-row');
-                    selectedUserId = user.id;
-                    document.getElementById('editUserBtn').disabled = false;
-                    document.getElementById('deleteUserBtn').disabled = false;
-                    document.getElementById('printFormBtn').disabled = false;
-                });
-                
-                tbody.appendChild(row);
+                usersTableBody.appendChild(row);
             });
-            
-            // Atualiza filtro de usuários
-            const userFilter = document.getElementById('userFilter');
-            userFilter.innerHTML = '<option value="">Filtrar por usuário</option>';
-            
-            users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = `${user.name} (${user.clientsRegistered})`;
-                userFilter.appendChild(option);
-            });
+
+            // Exibe o container da tabela
+            usersTableContainer.style.display = 'block';
         }
 
         function renderAllClientsTable(userFilter = '', searchFilter = '') {
@@ -2314,10 +2273,7 @@
             document.getElementById('restoreBtn').addEventListener('click', restoreBackup);
             
             // Botão para exibir usuários cadastrados
-            document.getElementById('showUsersBtn').addEventListener('click', () => {
-                renderUsersTable();
-                document.querySelector('.tab-button[data-tab="usersTab"]').click();
-            });
+            document.getElementById('showUsersBtn').addEventListener('click', renderUsersTable);
             
             // Botão para alterar admin
             document.getElementById('changeAdminBtn').addEventListener('click', changeAdmin);
