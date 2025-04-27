@@ -448,6 +448,69 @@
             padding-top: 10px;
             text-align: center;
         }
+
+        /* Responsividade para dispositivos móveis */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+
+            .container, .panel {
+                width: 95%;
+                margin: 10px auto;
+                padding: 15px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            input, select, button {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .actions button {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .logout-btn, .admin-actions button {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .tab-button {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .modal-content {
+                width: 90%;
+            }
+
+            .export-actions, .client-actions, .filter-options, .user-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .client-actions input, .filter-options input, .filter-options select, .user-actions input {
+                width: 100%;
+            }
+
+            .client-actions button, .filter-options button, .export-actions button, .user-actions button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body id="mainBody">
