@@ -549,6 +549,7 @@
 <body id="mainBody">
     <!-- Página de Login -->
     <div id="loginPage" class="container">
+        <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/logo.jpg" alt="Logo Academia Boa Forma" style="display: block; margin: 0 auto; width: 150px; height: auto;">
         <h1>ACADEMIA BOA FORMA</h1>
         <form id="loginForm">
             <input type="email" id="loginEmail" placeholder="E-mail" required>
@@ -1559,10 +1560,11 @@
             // Limpa o conteúdo anterior
             printContent.innerHTML = '';
 
-            // Cria o cabeçalho
+            // Cria o cabeçalho com a logo
             const header = document.createElement('div');
             header.id = 'printHeader';
             header.innerHTML = `
+                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/logo.jpg" alt="Logo Academia Boa Forma" style="display: block; margin: 0 auto; width: 100px; height: auto;">
                 <h1>FORMULÁRIO DE INSCRIÇÃO</h1>
                 <h2>ACADEMIA BOA FORMA</h2>
                 <h3>BOA VISTA DO GURUPI - MA</h3>
@@ -1626,7 +1628,7 @@
             // Limpa o conteúdo anterior
             printContent.innerHTML = '';
 
-            // Cria o comprovante
+            // Cria o comprovante com a logo
             const receipt = document.createElement('div');
             receipt.className = 'receipt';
             receipt.style.width = '148mm';
@@ -1640,6 +1642,7 @@
             receiptHeader.className = 'receipt-header';
             receiptHeader.style.textAlign = 'center';
             receiptHeader.innerHTML = `
+                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/logo.jpg" alt="Logo Academia Boa Forma" style="display: block; margin: 0 auto; width: 80px; height: auto;">
                 <h1 style="font-size: 14px; margin: 0;">COMPROVANTE DE PAGAMENTO</h1>
                 <h2 style="font-size: 12px; margin: 5px 0;">ACADEMIA BOA FORMA</h2>
                 <p style="font-size: 10px; margin: 0;">Boa Vista do Gurupi - MA</p>
