@@ -1703,6 +1703,15 @@
 
             // Alterna entre "Pago" e "Não Pago"
             client.status = client.status === 'Pago' ? 'Não Pago' : 'Pago';
+
+            // Atualiza a cor do status
+            const statusCell = document.querySelector(`tr[data-client-id="${clientId}"] td:nth-child(5)`);
+            if (client.status === 'Não Pago') {
+                statusCell.style.color = 'red';
+            } else {
+                statusCell.style.color = 'green';
+            }
+
             saveData();
 
             // Atualiza a tabela com base no tipo de usuário
@@ -1929,8 +1938,7 @@
                     <td>${client.gender}</td>
                     <td>${client.rg}</td>
                     <td>${client.phone}</td>
-                    <td class="status-${client.status === 'Pago' ? 'paid' : 'unpaid'}" 
-                        onclick="togglePaymentStatus('${client.id}')">
+                    <td style="color: ${statusColor}; font-weight: bold;" onclick="togglePaymentStatus('${client.id}')">
                         ${client.status}
                     </td>
                     <td>${registrationDate.toLocaleDateString()}</td>
