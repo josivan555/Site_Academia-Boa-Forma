@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=148mm, height=64mm, initial-scale=1.0">
     <title>ACADEMIA BOA FORMA</title>
     <style>
         body {
@@ -400,17 +400,17 @@
 
         /* Estilo para o comprovante de pagamento */
         .receipt {
-            max-width: 400px; /* Define uma largura fixa para o recibo */
-            margin: 20px auto; /* Centraliza horizontalmente */
-            padding: 20px; /* Adiciona espaçamento interno */
-            border: 2px solid #000; /* Adiciona uma borda preta */
-            border-radius: 8px; /* Arredonda os cantos */
-            background-color: #fff; /* Fundo branco */
-            font-family: Arial, sans-serif; /* Define a fonte */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona sombra */
+            max-width: 148mm;
+            height: 64mm;
+            border: 1px solid #000;
+            padding: 10px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
         }
 
         .receipt-header {
+            text-align: center; /* Centraliza o texto */
             text-align: center; /* Centraliza o texto */
             margin-bottom: 20px; /* Espaçamento abaixo do cabeçalho */
         }
@@ -737,7 +737,6 @@
                         <th>Nome</th>
                         <th>E-mail</th>
                         <th>Status</th>
-                        <th>Clientes Cadastrados</th>
                         <th>Admin</th>
                     </tr>
                 </thead>
@@ -809,6 +808,34 @@
                 <div class="form-row">
                     <button type="button" id="saveUserBtn" class="btn-success">Salvar</button>
                     <button type="button" id="cancelUserBtn">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Formulário de edição de usuário -->
+        <div id="userEditForm" class="edit-form-container" style="display: none;">
+            <h3>Editar Usuário</h3>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="form-row">
+                    <input type="text" id="editUserName" placeholder="Nome completo" required>
+                    <input type="text" id="editUserAddress" placeholder="Endereço" required>
+                </div>
+                <div class="form-row">
+                    <input type="email" id="editUserEmail" placeholder="E-mail" required>
+                    <input type="password" id="editUserPassword" placeholder="Nova Senha (opcional)">
+                </div>
+                <div class="form-row">
+                    <label>
+                        <input type="checkbox" id="editUserIsAdmin"> Administrador
+                    </label>
+                    <label>
+                        <input type="checkbox" id="editUserIsActive" checked> Ativo
+                    </label>
+                </div>
+                <div class="form-row">
+                    <button type="button" id="saveEditedUserBtn" class="btn-success">Salvar Alterações</button>
+                    <button type="button" id="cancelEditUserBtn" class="btn-danger">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -1375,18 +1402,19 @@
         function editUser(userId) {
             const user = users.find(u => u.id === userId);
             if (!user) return;
-            
-            document.getElementById('userFormTitle').textContent = 'Editar Usuário';
-            document.getElementById('userId').value = user.id;
-            document.getElementById('userName').value = user.name;
-            document.getElementById('userAddress').value = user.address;
-            document.getElementById('userEmail').value = user.email;
-            document.getElementById('userPassword').value = '';
-            document.getElementById('userIsAdmin').checked = user.isAdmin;
-            document.getElementById('userIsActive').checked = user.isActive;
-            
-            document.getElementById('userFormContainer').style.display = 'block';
-            document.getElementById('userFormContainer').scrollIntoView({ behavior: 'smooth' });
+
+            // Preenche os campos do formulário com os dados do usuário
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editUserName').value = user.name;
+            document.getElementById('editUserAddress').value = user.address;
+            document.getElementById('editUserEmail').value = user.email;
+            document.getElementById('editUserPassword').value = ''; // Senha opcional
+            document.getElementById('editUserIsAdmin').checked = user.isAdmin;
+            document.getElementById('editUserIsActive').checked = user.isActive;
+
+            // Exibe o formulário de edição
+            document.getElementById('userEditForm').style.display = 'block';
+            document.getElementById('userEditForm').scrollIntoView({ behavior: 'smooth' });
         }
 
         // Função para mostrar o formulário de inscrição do usuário
@@ -1447,13 +1475,13 @@
         function showClientPrintForm(clientId) {
             const client = clients.find(c => c.id === clientId);
             if (!client) return;
-            
+
             const printWindow = document.getElementById('printWindow');
             const printContent = document.getElementById('printContent');
-            
+
             // Limpa o conteúdo anterior
             printContent.innerHTML = '';
-            
+
             // Cria o cabeçalho
             const header = document.createElement('div');
             header.id = 'printHeader';
@@ -1462,26 +1490,27 @@
                 <h2>ACADEMIA BOA FORMA</h2>
                 <h3>BOA VISTA DO GURUPI - MA</h3>
             `;
-            printContent.insertBefore(header, printContent.firstChild);
-            
+            printContent.appendChild(header);
+
             // Adiciona os dados do cliente
             const addDataRow = (label, value) => {
                 const row = document.createElement('div');
                 row.className = 'client-data-row';
-                
+
                 const labelDiv = document.createElement('div');
                 labelDiv.className = 'client-data-label';
                 labelDiv.textContent = label;
-                
+
                 const valueDiv = document.createElement('div');
                 valueDiv.className = 'client-data-value';
                 valueDiv.textContent = value || '_________________________';
-                
+
                 row.appendChild(labelDiv);
                 row.appendChild(valueDiv);
                 printContent.appendChild(row);
             };
 
+            addDataRow('ID:', client.id.substr(0, 8));
             addDataRow('Nome:', client.name);
             addDataRow('Sexo:', client.gender);
             addDataRow('RG:', client.rg);
@@ -1498,13 +1527,13 @@
             addDataRow('Valor da Mensalidade:', client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : '');
             addDataRow('Data de Cadastro:', new Date(client.registrationDate).toLocaleDateString());
             addDataRow('Data de Vencimento:', new Date(client.dueDate).toLocaleDateString());
-            
+
             // Adiciona linha de assinatura
             const signature = document.createElement('div');
             signature.className = 'signature-line';
             signature.textContent = 'Assinatura do Cliente';
             printContent.appendChild(signature);
-            
+
             // Mostra a janela de impressão
             printWindow.style.display = 'block';
         }
@@ -1523,21 +1552,30 @@
             // Cria o comprovante
             const receipt = document.createElement('div');
             receipt.className = 'receipt';
+            receipt.style.width = '148mm';
+            receipt.style.height = '64mm';
+            receipt.style.border = '1px solid #000';
+            receipt.style.padding = '10px';
+            receipt.style.boxSizing = 'border-box';
 
             // Cabeçalho do comprovante
             const receiptHeader = document.createElement('div');
             receiptHeader.className = 'receipt-header';
+            receiptHeader.style.textAlign = 'center';
             receiptHeader.innerHTML = `
-                <h1>COMPROVANTE DE PAGAMENTO</h1>
-                <h2>ACADEMIA BOA FORMA</h2>
-                <p>Boa Vista do Gurupi - MA</p>
+                <h1 style="font-size: 14px; margin: 0;">COMPROVANTE DE PAGAMENTO</h1>
+                <h2 style="font-size: 12px; margin: 5px 0;">ACADEMIA BOA FORMA</h2>
+                <p style="font-size: 10px; margin: 0;">Boa Vista do Gurupi - MA</p>
             `;
             receipt.appendChild(receiptHeader);
 
             // Dados do comprovante
             const addReceiptRow = (label, value) => {
                 const row = document.createElement('div');
-                row.className = 'receipt-data-row';
+                row.style.display = 'flex';
+                row.style.justifyContent = 'space-between';
+                row.style.fontSize = '12px';
+                row.style.marginBottom = '5px';
 
                 const labelDiv = document.createElement('div');
                 labelDiv.textContent = label;
@@ -1552,24 +1590,19 @@
 
             addReceiptRow('ID:', client.id.substr(0, 8));
             addReceiptRow('Nome:', client.name);
-            addReceiptRow('RG:', client.rg);
             addReceiptRow('Endereço:', client.address);
-            addReceiptRow('Data de Pagamento:', new Date().toLocaleDateString());
             addReceiptRow('Valor da Mensalidade:', client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : '');
-
-            // Rodapé do comprovante
-            const receiptFooter = document.createElement('div');
-            receiptFooter.className = 'receipt-footer';
-            receiptFooter.innerHTML = `
-                <p>Obrigado por escolher a Academia Boa Forma!</p>
-            `;
-            receipt.appendChild(receiptFooter);
+            addReceiptRow('RG:', client.rg);
+            addReceiptRow('Data de Pagamento:', new Date().toLocaleDateString());
 
             // Assinatura
-            const receiptSignature = document.createElement('div');
-            receiptSignature.className = 'receipt-signature';
-            receiptSignature.textContent = 'Assinatura do Cliente';
-            receipt.appendChild(receiptSignature);
+            const signature = document.createElement('div');
+            signature.style.marginTop = '20px';
+            signature.style.textAlign = 'center';
+            signature.style.borderTop = '1px solid #000';
+            signature.style.paddingTop = '5px';
+            signature.textContent = 'Assinatura do Cliente';
+            receipt.appendChild(signature);
 
             printContent.appendChild(receipt);
 
@@ -1831,21 +1864,13 @@
         }
 
         function renderUsersTable() {
-            const usersTableContainer = document.getElementById('usersTableContainer');
             const usersTableBody = document.getElementById('usersTableBody');
-
-            // Limpa o conteúdo anterior da tabela
             usersTableBody.innerHTML = '';
 
-            // Verifica se há usuários cadastrados
-            if (users.length === 0) {
-                usersTableBody.innerHTML = '<tr><td colspan="5">Nenhum usuário cadastrado.</td></tr>';
-                return;
-            }
-
-            // Adiciona os usuários à tabela
             users.forEach(user => {
                 const row = document.createElement('tr');
+                row.dataset.userId = user.id;
+
                 row.innerHTML = `
                     <td>${user.id}</td>
                     <td>${user.name}</td>
@@ -1853,92 +1878,91 @@
                     <td>${user.isActive ? 'Ativo' : 'Inativo'}</td>
                     <td>${user.isAdmin ? 'Sim' : 'Não'}</td>
                 `;
+
+                // Adiciona evento de clique para selecionar o usuário
+                row.addEventListener('click', () => {
+                    // Remove a seleção de todas as linhas
+                    document.querySelectorAll('#usersTableBody tr').forEach(r => {
+                        r.classList.remove('selected-row');
+                    });
+
+                    // Adiciona a seleção na linha clicada
+                    row.classList.add('selected-row');
+                    selectedUserId = user.id;
+
+                    // Habilita os botões de edição e exclusão
+                    document.getElementById('editUserBtn').disabled = false;
+                    document.getElementById('deleteUserBtn').disabled = false;
+                    document.getElementById('printFormBtn').disabled = false;
+                });
+
                 usersTableBody.appendChild(row);
             });
-
-            // Exibe o container da tabela
-            usersTableContainer.style.display = 'block';
         }
 
         function renderAllClientsTable(userFilter = '', searchFilter = '') {
             const tbody = document.getElementById('allClientsTableBody');
             tbody.innerHTML = '';
-            
-            let filteredClients = [...clients];
-            
+
+            let filteredClients = clients;
+
             if (userFilter) {
                 filteredClients = filteredClients.filter(c => c.registeredBy === userFilter);
             }
-            
+
             if (searchFilter) {
                 const searchTerm = searchFilter.toLowerCase();
-                filteredClients = filteredClients.filter(c => 
-                    c.name.toLowerCase().includes(searchTerm) || 
+                filteredClients = filteredClients.filter(c =>
+                    c.name.toLowerCase().includes(searchTerm) ||
                     c.rg.toLowerCase().includes(searchTerm)
                 );
             }
-            
+
             filteredClients.forEach(client => {
                 const registeredBy = users.find(u => u.id === client.registeredBy);
                 const registeredByName = registeredBy ? registeredBy.name : 'Desconhecido';
                 const registrationDate = new Date(client.registrationDate);
                 const dueDate = new Date(client.dueDate);
-                const dueStatus = checkDueDate(client.dueDate, client.registrationDate);
-                
-                // Se passou do vencimento, marca como não pago
-                if (dueStatus.status === 'overdue' && client.status === 'Pago') {
-                    client.status = 'Não Pago';
-                    saveData();
-                }
-                
+
                 const row = document.createElement('tr');
                 row.dataset.clientId = client.id;
-                
+
                 row.innerHTML = `
                     <td>${client.id.substr(0, 8)}</td>
                     <td>${client.name}</td>
                     <td>${client.rg}</td>
                     <td>${client.phone}</td>
-                    <td class="status-${client.status === 'Pago' ? 'paid' : 'unpaid'}" 
-                        onclick="togglePaymentStatus('${client.id}')">
-                        ${client.status}
-                    </td>
+                    <td>${client.status}</td>
                     <td>${registrationDate.toLocaleDateString()}</td>
-                    <td style="color: ${
-                        dueStatus.status === 'overdue' ? 'red' : 
-                        dueStatus.status === 'warning' ? '#FFA500' : 
-                        'green'
-                    }; font-weight: bold;">
-                        ${dueDate.toLocaleDateString()}
-                    </td>
+                    <td>${dueDate.toLocaleDateString()}</td>
                     <td>${client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : ''}</td>
                     <td>${registeredByName}</td>
-                    <td class="actions">
+                    <td>
                         <button onclick="adminEditClient('${client.id}')">Editar</button>
                         <button onclick="deleteClient('${client.id}')">Excluir</button>
                     </td>
                 `;
-                
-                row.addEventListener('click', (e) => {
-                    // Evita a seleção quando clica nos botões de ação
-                    if (e.target.tagName === 'BUTTON') return;
-                    
+
+                // Adiciona evento de clique para selecionar o cliente
+                row.addEventListener('click', () => {
                     // Remove a seleção de todas as linhas
                     document.querySelectorAll('#allClientsTableBody tr').forEach(r => {
                         r.classList.remove('selected-row');
                     });
-                    
+
                     // Adiciona a seleção na linha clicada
                     row.classList.add('selected-row');
                     selectedClientId = client.id;
+
+                    // Habilita os botões de impressão
                     document.getElementById('printClientFormBtn').disabled = false;
                     document.getElementById('printReceiptBtn').disabled = false;
                 });
-                
+
                 tbody.appendChild(row);
             });
         }
-
+            
         // Exportar para Excel
         function exportToExcel() {
             let csv = 'ID,Nome,Sexo,RG,Contato,Status,Data Cadastro,Data Vencimento,Valor,Endereço,Bairro,Cidade,UF,CEP,E-mail\n';
@@ -2054,13 +2078,11 @@
                     email: document.getElementById('clientEmail').value,
                     phone: document.getElementById('clientPhone').value,
                     monthlyPayment: document.getElementById('clientMonthlyPayment').value,
-                    dueDate: document.getElementById('clientDueDate').value
+                    dueDate: document.getElementById('clientDueDate').value,
                 };
-                
                 updateClient(currentEditingClientId, clientData);
             });
-            
-            // Botão de atualizar cliente no admin
+
             document.getElementById('adminUpdateClientBtn').addEventListener('click', () => {
                 const clientData = {
                     name: document.getElementById('adminClientName').value,
@@ -2078,13 +2100,12 @@
                     phone: document.getElementById('adminClientPhone').value,
                     monthlyPayment: document.getElementById('adminClientMonthlyPayment').value,
                     dueDate: document.getElementById('adminClientDueDate').value,
-                    registrationDate: document.getElementById('adminClientRegistrationDate').value
+                    registrationDate: document.getElementById('adminClientRegistrationDate').value,
                 };
-                
                 const clientId = document.getElementById('adminClientId').value;
                 adminUpdateClient(clientId, clientData);
             });
-            
+
             // Botão de salvar usuário
             document.getElementById('saveUserBtn').addEventListener('click', () => {
                 const userData = {
@@ -2096,87 +2117,78 @@
                     isAdmin: document.getElementById('userIsAdmin').checked,
                     isActive: document.getElementById('userIsActive').checked
                 };
-                
                 saveUser(userData);
             });
-            
+                
             // Botão de cancelar edição
             document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
-            
             // Botão de cancelar edição no admin
             document.getElementById('adminCancelEditBtn').addEventListener('click', cancelAdminEdit);
-            
             // Botão de cancelar edição de usuário
             document.getElementById('cancelUserBtn').addEventListener('click', cancelUserEdit);
-            
+            document.getElementById('cancelEditUserBtn').addEventListener('click', () => {
+                // Oculta o formulário de edição
+                document.getElementById('userEditForm').style.display = 'none';
+            });
             // Botão de imprimir formulário de usuário
             document.getElementById('printFormBtn').addEventListener('click', () => {
                 if (selectedUserId) {
                     showPrintForm(selectedUserId);
                 }
             });
-            
             // Botão de imprimir formulário de cliente
             document.getElementById('printClientFormBtn').addEventListener('click', () => {
                 if (selectedClientId) {
                     showClientPrintForm(selectedClientId);
+                } else {
+                    alert('Por favor, selecione um cliente para imprimir o formulário.');
                 }
             });
-            
-            // Botão de imprimir comprovante
+
             document.getElementById('printReceiptBtn').addEventListener('click', () => {
                 if (selectedClientId) {
                     showPaymentReceipt(selectedClientId);
                 }
             });
-            
+
             // Navegação
             document.getElementById('registerLink').addEventListener('click', (e) => {
                 e.preventDefault();
                 showPage('registerPage');
             });
-            
             document.getElementById('backToLogin').addEventListener('click', (e) => {
                 e.preventDefault();
                 showPage('loginPage');
             });
-            
             document.getElementById('forgotPassword').addEventListener('click', (e) => {
                 e.preventDefault();
                 showPage('recoveryPage');
             });
-            
             document.getElementById('backToLoginFromRecovery').addEventListener('click', (e) => {
                 e.preventDefault();
                 showPage('loginPage');
             });
-            
             // Logout
             document.getElementById('logoutBtn').addEventListener('click', () => {
                 currentUser = null;
                 showPage('loginPage');
             });
-            
             document.getElementById('adminLogoutBtn').addEventListener('click', () => {
                 currentUser = null;
                 showPage('loginPage');
             });
-            
             // Ações de clientes
             document.getElementById('markAllPaid').addEventListener('click', () => {
                 markAllAsPaid();
             });
-            
             document.getElementById('searchClient').addEventListener('click', () => {
                 const filter = document.getElementById('clientSearch').value;
                 renderClientsTable(filter);
             });
-            
             document.getElementById('clearSearch').addEventListener('click', () => {
                 document.getElementById('clientSearch').value = '';
                 renderClientsTable();
             });
-            
             document.getElementById('exportExcel').addEventListener('click', () => {
                 exportToExcel();
             });
@@ -2188,7 +2200,6 @@
                     renderClientsTable();
                 }
             });
-            
             // Ações de administração
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.addEventListener('click', () => {
@@ -2211,29 +2222,24 @@
                     }
                 });
             });
-            
             document.getElementById('adminSearchClient').addEventListener('click', () => {
                 const userFilter = document.getElementById('userFilter').value;
                 const searchFilter = document.getElementById('adminClientSearch').value;
                 renderAllClientsTable(userFilter, searchFilter);
             });
-            
             document.getElementById('adminClearSearch').addEventListener('click', () => {
                 document.getElementById('userFilter').value = '';
                 document.getElementById('adminClientSearch').value = '';
                 renderAllClientsTable();
             });
-            
             document.getElementById('searchUserBtn').addEventListener('click', () => {
                 const filter = document.getElementById('userSearch').value;
                 renderUsersTable(filter);
             });
-            
             document.getElementById('clearUserSearchBtn').addEventListener('click', () => {
                 document.getElementById('userSearch').value = '';
                 renderUsersTable();
             });
-            
             document.getElementById('addUserBtn').addEventListener('click', () => {
                 document.getElementById('userFormTitle').textContent = 'Cadastrar Novo Usuário';
                 document.getElementById('userForm').reset();
@@ -2241,7 +2247,6 @@
                 document.getElementById('userFormContainer').style.display = 'block';
                 document.getElementById('userFormContainer').scrollIntoView({ behavior: 'smooth' });
             });
-            
             document.getElementById('editUserBtn').addEventListener('click', () => {
                 if (selectedUserId) {
                     editUser(selectedUserId);
@@ -2253,7 +2258,6 @@
                     deleteUser(selectedUserId);
                 }
             });
-            
             document.getElementById('changeBackgroundBtn').addEventListener('click', () => {
                 const fileInput = document.createElement('input');
                 fileInput.type = 'file';
@@ -2265,40 +2269,63 @@
                 };
                 fileInput.click();
             });
-            
             // Botão de backup
             document.getElementById('backupBtn').addEventListener('click', createBackup);
-            
             // Botão de restaurar backup
             document.getElementById('restoreBtn').addEventListener('click', restoreBackup);
-            
             // Botão para exibir usuários cadastrados
             document.getElementById('showUsersBtn').addEventListener('click', renderUsersTable);
-            
             // Botão para alterar admin
             document.getElementById('changeAdminBtn').addEventListener('click', changeAdmin);
-            
             // Botão para confirmar alteração de admin
             document.getElementById('confirmAdminChange').addEventListener('click', confirmAdminChange);
-            
             // Botão para cancelar alteração de admin
             document.getElementById('cancelAdminChange').addEventListener('click', () => {
                 document.getElementById('changeAdminForm').style.display = 'none';
             });
-            
             // Escolha de painel para admin
             document.getElementById('chooseClientPanel').addEventListener('click', () => {
                 hideModal('panelChoiceModal');
                 showPage('clientPanel');
                 renderClientsTable();
             });
-            
             document.getElementById('chooseAdminPanel').addEventListener('click', () => {
                 hideModal('panelChoiceModal');
                 showPage('adminPanel');
                 renderUsersTable();
                 renderAllClientsTable();
             });
+            
+            document.getElementById('saveEditedUserBtn').addEventListener('click', () => {
+                const userId = document.getElementById('editUserId').value;
+                const userIndex = users.findIndex(u => u.id === userId);
+                if (userIndex === -1) return;
+            
+                // Atualiza os dados do usuário
+                users[userIndex].name = document.getElementById('editUserName').value;
+                users[userIndex].address = document.getElementById('editUserAddress').value;
+                users[userIndex].email = document.getElementById('editUserEmail').value;
+                users[userIndex].isAdmin = document.getElementById('editUserIsAdmin').checked;
+                users[userIndex].isActive = document.getElementById('editUserIsActive').checked;
+            
+                // Atualiza a senha apenas se for preenchida
+                const newPassword = document.getElementById('editUserPassword').value;
+                if (newPassword) {
+                    users[userIndex].password = newPassword;
+                }
+
+                // Salva os dados e atualiza a tabela
+                saveData();
+                renderUsersTable();
+
+                // Oculta o formulário de edição
+                document.getElementById('userEditForm').style.display = 'none';
+                showMessage('loginMessage', 'Usuário atualizado com sucesso!', true);
+            });
+
+            document.getElementById('editUserBtn').disabled = true;
+            document.getElementById('deleteUserBtn').disabled = true;
+            document.getElementById('printFormBtn').disabled = true;
         });
     </script>
 </body>
