@@ -1342,15 +1342,13 @@
 
         // Funções de clientes
         function addClient(clientData) {
-            // Verifica se o cliente já existe (por RG)
-            const existingClient = clients.find(c => c.rg === clientData.rg);
+            // Verifica se o cliente já existe (por RG e registrado pelo mesmo usuário)
+            const existingClient = clients.find(c => c.rg === clientData.rg && c.registeredBy === currentUser.id);
             if (existingClient) {
-                const registeredBy = users.find(u => u.id === existingClient.registeredBy);
-                const registeredByName = registeredBy ? registeredBy.name : 'Desconhecido';
-                showMessage('loginMessage', `Cliente já cadastrado por: ${registeredByName}`, false);
+                showMessage('loginMessage', 'Cliente já cadastrado.', false);
                 return;
             }
-            
+
             const newClient = {
                 id: generateId(),
                 ...clientData,
@@ -1359,16 +1357,17 @@
                 registrationDate: clientData.registrationDate || new Date().toISOString(),
                 dueDate: clientData.dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
             };
-            
+
             clients.push(newClient);
-            
+
             // Atualiza contador do usuário
             const user = users.find(u => u.id === currentUser.id);
             if (user) user.clientsRegistered++;
-            
+
             saveData();
-            renderClientsTable();
-            document.getElementById('clientForm').reset();
+            renderClientsTable(); // Atualiza a tabela de clientes
+            document.getElementById('clientForm').reset(); // Limpa o formulário
+            showMessage('loginMessage', 'Cliente cadastrado com sucesso!', true);
         }
 
         function updateClient(clientId, clientData) {
@@ -1908,54 +1907,40 @@
         function renderClientsTable(filter = '') {
             const tbody = document.getElementById('clientsTableBody');
             tbody.innerHTML = '';
-            
+
+            // Filtra os clientes registrados pelo usuário atual
             let userClients = clients.filter(c => c.registeredBy === currentUser.id);
-            
+
             if (filter) {
                 const searchTerm = filter.toLowerCase();
-                userClients = userClients.filter(c => 
-                    c.name.toLowerCase().includes(searchTerm) || 
+                userClients = userClients.filter(c =>
+                    c.name.toLowerCase().includes(searchTerm) ||
                     c.rg.toLowerCase().includes(searchTerm)
                 );
             }
-            
+
             userClients.forEach(client => {
                 const registrationDate = new Date(client.registrationDate);
                 const dueDate = new Date(client.dueDate);
-                const dueStatus = checkDueDate(client.dueDate, client.registrationDate);
-                
-                // Se passou do vencimento, marca como não pago
-                if (dueStatus.status === 'overdue' && client.status === 'Pago') {
-                    client.status = 'Não Pago';
-                    saveData();
-                }
-                
+
                 const row = document.createElement('tr');
-                
                 row.innerHTML = `
                     <td>${client.id.substr(0, 8)}</td>
                     <td>${client.name}</td>
                     <td>${client.gender}</td>
                     <td>${client.rg}</td>
                     <td>${client.phone}</td>
-                    <td style="color: ${statusColor}; font-weight: bold;" onclick="togglePaymentStatus('${client.id}')">
+                    <td style="color: ${client.status === 'Pago' ? 'green' : 'red'}; font-weight: bold;">
                         ${client.status}
                     </td>
                     <td>${registrationDate.toLocaleDateString()}</td>
-                    <td style="color: ${
-                        dueStatus.status === 'overdue' ? 'red' : 
-                        dueStatus.status === 'warning' ? '#FFA500' : 
-                        'green'
-                    }; font-weight: bold;">
-                        ${dueDate.toLocaleDateString()}
-                    </td>
+                    <td>${dueDate.toLocaleDateString()}</td>
                     <td>${client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : ''}</td>
                     <td class="actions">
                         <button onclick="editClient('${client.id}')">Editar</button>
                         <button onclick="deleteClient('${client.id}')">Excluir</button>
                     </td>
                 `;
-                
                 tbody.appendChild(row);
             });
         }
