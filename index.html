@@ -1634,62 +1634,59 @@
             // Limpa o conteúdo anterior
             printContent.innerHTML = '';
 
-            // Cria o comprovante com a logo
+            // Cria o layout do comprovante
             const receipt = document.createElement('div');
             receipt.className = 'receipt';
-            receipt.style.width = '148mm';
-            receipt.style.height = '64mm';
+            receipt.style.width = '297mm'; // Tamanho A4 horizontal
+            receipt.style.height = 'auto';
             receipt.style.border = '1px solid #000';
-            receipt.style.padding = '10px';
+            receipt.style.padding = '20px';
             receipt.style.boxSizing = 'border-box';
+            receipt.style.fontFamily = 'Arial, sans-serif';
+            receipt.style.fontSize = '14px';
+            receipt.style.lineHeight = '1.6';
 
             // Cabeçalho do comprovante
             const receiptHeader = document.createElement('div');
             receiptHeader.className = 'receipt-header';
             receiptHeader.style.textAlign = 'center';
+            receiptHeader.style.marginBottom = '20px';
             receiptHeader.innerHTML = `
-                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/logo.jpg" alt="Logo Academia Boa Forma" style="display: block; margin: 0 auto; width: 80px; height: auto;">
-                <h1 style="font-size: 14px; margin: 0;">COMPROVANTE DE PAGAMENTO</h1>
-                <h2 style="font-size: 12px; margin: 5px 0;">ACADEMIA BOA FORMA</h2>
-                <p style="font-size: 10px; margin: 0;">Boa Vista do Gurupi - MA</p>
+                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/logo.jpg" alt="Logo Academia Boa Forma" style="width: 100px; height: auto; margin-bottom: 10px;">
+                <h1 style="font-size: 18px; margin: 0;">COMPROVANTE DE PAGAMENTO</h1>
+                <p style="font-size: 14px; margin: 5px 0;">ACADEMIA BOA FORMA</p>
+                <p style="font-size: 12px; margin: 0;">Boa Vista do Gurupi - MA</p>
             `;
             receipt.appendChild(receiptHeader);
 
-            // Dados do comprovante
-            const addReceiptRow = (label, value) => {
-                const row = document.createElement('div');
-                row.style.display = 'flex';
-                row.style.justifyContent = 'space-between';
-                row.style.fontSize = '12px';
-                row.style.marginBottom = '5px';
+            // Corpo do comprovante
+            const receiptBody = document.createElement('div');
+            receiptBody.style.marginBottom = '20px';
+            receiptBody.innerHTML = `
+                <p>Recebemos de <strong>${client.name}</strong>, portador do RG <strong>${client.rg}</strong>, residente no endereço <strong>${client.address}, ${client.neighborhood}, ${client.city} - ${client.uf}</strong>, o valor de <strong>R$ ${parseFloat(client.monthlyPayment).toFixed(2)}</strong>, referente ao pagamento da mensalidade.</p>
+                <p>Data de pagamento: <strong>${new Date().toLocaleDateString()}</strong>.</p>
+                <p>Este comprovante serve como prova de quitação do valor acima mencionado.</p>
+            `;
+            receipt.appendChild(receiptBody);
 
-                const labelDiv = document.createElement('div');
-                labelDiv.textContent = label;
+            // Rodapé com assinatura
+            const receiptFooter = document.createElement('div');
+            receiptFooter.style.display = 'flex';
+            receiptFooter.style.justifyContent = 'space-between';
+            receiptFooter.style.marginTop = '30px';
+            receiptFooter.innerHTML = `
+                <div style="text-align: center;">
+                    <p>______________________________</p>
+                    <p>Assinatura do Cliente</p>
+                </div>
+                <div style="text-align: center;">
+                    <p>____________________________</p>
+                    <p>Assinatura do Representante da Academia</p>
+                </div>
+            `;
+            receipt.appendChild(receiptFooter);
 
-                const valueDiv = document.createElement('div');
-                valueDiv.textContent = value || '_________________________';
-
-                row.appendChild(labelDiv);
-                row.appendChild(valueDiv);
-                receipt.appendChild(row);
-            };
-
-            addReceiptRow('ID:', client.id.substr(0, 8));
-            addReceiptRow('Nome:', client.name);
-            addReceiptRow('Endereço:', client.address);
-            addReceiptRow('Valor da Mensalidade:', client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : '');
-            addReceiptRow('RG:', client.rg);
-            addReceiptRow('Data de Pagamento:', new Date().toLocaleDateString());
-
-            // Assinatura
-            const signature = document.createElement('div');
-            signature.style.marginTop = '20px';
-            signature.style.textAlign = 'center';
-            signature.style.borderTop = '1px solid #000';
-            signature.style.paddingTop = '5px';
-            signature.textContent = 'Assinatura do Cliente';
-            receipt.appendChild(signature);
-
+            // Adiciona o conteúdo ao elemento de impressão
             printContent.appendChild(receipt);
 
             // Mostra a janela de impressão
