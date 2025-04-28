@@ -2344,6 +2344,10 @@
                 currentUser = null;
                 showPage('loginPage');
             });
+            document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+                currentUser = null;
+                showPage('loginPage');
+            });
             document.getElementById('exportExcel').addEventListener('click', () => {
                 exportToExcel();
             });
@@ -2519,14 +2523,14 @@
                 const userId = document.getElementById('editUserId').value;
                 const userIndex = users.findIndex(u => u.id === userId);
                 if (userIndex === -1) return;
-            
+
                 // Atualiza os dados do usuário
                 users[userIndex].name = document.getElementById('editUserName').value;
                 users[userIndex].address = document.getElementById('editUserAddress').value;
                 users[userIndex].email = document.getElementById('editUserEmail').value;
                 users[userIndex].isAdmin = document.getElementById('editUserIsAdmin').checked;
                 users[userIndex].isActive = document.getElementById('editUserIsActive').checked;
-            
+
                 // Atualiza a senha apenas se for preenchida
                 const newPassword = document.getElementById('editUserPassword').value;
                 if (newPassword) {
