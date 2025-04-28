@@ -1752,22 +1752,9 @@
             // Alterna entre "Pago" e "Não Pago"
             client.status = client.status === 'Pago' ? 'Não Pago' : 'Pago';
 
-            // Atualiza a cor do status
-            const statusCell = document.querySelector(`tr[data-client-id="${clientId}"] td:nth-child(5)`);
-            if (client.status === 'Não Pago') {
-                statusCell.style.color = 'red';
-            } else {
-                statusCell.style.color = 'green';
-            }
-
+            // Atualiza a tabela após a alteração
+            renderAllClientsTable();
             saveData();
-
-            // Atualiza a tabela com base no tipo de usuário
-            if (currentUser.isAdmin) {
-                renderAllClientsTable();
-            } else {
-                renderClientsTable();
-            }
         }
 
         function markAllAsPaid() {
@@ -2050,8 +2037,6 @@
             }
 
             filteredClients.forEach(client => {
-                const registeredBy = users.find(u => u.id === client.registeredBy);
-                const registeredByName = registeredBy ? registeredBy.name : 'Desconhecido';
                 const registrationDate = new Date(client.registrationDate);
                 const dueDate = new Date(client.dueDate);
                 const today = new Date();
@@ -2059,13 +2044,12 @@
                 // Calcula os dias restantes para o vencimento
                 const daysRemaining = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
 
-                // Define a cor e o status com base no vencimento
-                let statusColor = 'green';
-                if (daysRemaining <= 5 && daysRemaining > 0) {
-                    statusColor = '#FFA500'; // Amarelo
-                } else if (daysRemaining <= 0) {
-                    statusColor = 'red'; // Vermelho
-                    client.status = 'Não Pago'; // Atualiza o status automaticamente
+                // Define a cor do status com base no vencimento
+                let statusColor = 'green'; // Pago
+                if (client.status === 'Não Pago') {
+                    statusColor = 'red'; // Não Pago
+                } else if (daysRemaining <= 5 && daysRemaining > 0) {
+                    statusColor = '#FFA500'; // Laranja (próximo do vencimento)
                 }
 
                 const row = document.createElement('tr');
@@ -2076,13 +2060,13 @@
                     <td>${client.name}</td>
                     <td>${client.rg}</td>
                     <td>${client.phone}</td>
-                    <td style="color: ${statusColor}; font-weight: bold;" onclick="togglePaymentStatus('${client.id}')">
+                    <td style="color: ${statusColor}; font-weight: bold; cursor: pointer;" onclick="togglePaymentStatus('${client.id}')">
                         ${client.status}
                     </td>
                     <td>${registrationDate.toLocaleDateString()}</td>
                     <td>${dueDate.toLocaleDateString()}</td>
                     <td>${client.monthlyPayment ? `R$ ${parseFloat(client.monthlyPayment).toFixed(2)}` : ''}</td>
-                    <td>${registeredByName}</td>
+                    <td>${users.find(u => u.id === client.registeredBy)?.name || 'Desconhecido'}</td>
                     <td class="actions">
                         <button onclick="adminEditClient('${client.id}')">Editar</button>
                         <button onclick="deleteClient('${client.id}')">Excluir</button>
@@ -2329,9 +2313,12 @@
                 }
             });
 
+            // Botão de imprimir comprovante de pagamento
             document.getElementById('printReceiptBtn').addEventListener('click', () => {
                 if (selectedClientId) {
                     showPaymentReceipt(selectedClientId);
+                } else {
+                    alert('Por favor, selecione um cliente para imprimir o comprovante.');
                 }
             });
 
@@ -2357,22 +2344,6 @@
                 currentUser = null;
                 showPage('loginPage');
             });
-            document.getElementById('adminLogoutBtn').addEventListener('click', () => {
-                currentUser = null;
-                showPage('loginPage');
-            });
-            // Ações de clientes
-            document.getElementById('markAllPaid').addEventListener('click', () => {
-                markAllAsPaid();
-            });
-            document.getElementById('searchClient').addEventListener('click', () => {
-                const filter = document.getElementById('clientSearch').value;
-                renderClientsTable(filter);
-            });
-            document.getElementById('clearSearch').addEventListener('click', () => {
-                document.getElementById('clientSearch').value = '';
-                renderClientsTable();
-            });
             document.getElementById('exportExcel').addEventListener('click', () => {
                 exportToExcel();
             });
@@ -2384,13 +2355,20 @@
                     renderClientsTable();
                 }
             });
+            document.getElementById('searchClient').addEventListener('click', () => {
+                const filter = document.getElementById('clientSearch').value;
+                renderClientsTable(filter);
+            });
+            document.getElementById('clearSearch').addEventListener('click', () => {
+                document.getElementById('clientSearch').value = '';
+                renderClientsTable();
+            });
             // Ações de administração
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.addEventListener('click', () => {
                     document.querySelectorAll('.tab-button').forEach(btn => {
                         btn.classList.remove('active');
                     });
-                    
                     document.querySelectorAll('.tab-content').forEach(content => {
                         content.classList.remove('active');
                     });
@@ -2513,7 +2491,7 @@
                 renderAllClientsTable();
             });
 
-            // Botão para ir para a página de cadastro
+            // Botão para ir para a página de cadastro admin
             document.getElementById('goToClientPanel').addEventListener('click', () => {
                 showPage('clientPanel');
                 renderClientsTable();
@@ -2562,6 +2540,11 @@
                 // Oculta o formulário de edição
                 document.getElementById('userEditForm').style.display = 'none';
                 showMessage('loginMessage', 'Usuário atualizado com sucesso!', true);
+
+                // Desabilita os botões de edição e exclusão
+                document.getElementById('editUserBtn').disabled = true;
+                document.getElementById('deleteUserBtn').disabled = true;
+                document.getElementById('printFormBtn').disabled = true;
             });
 
             document.getElementById('editUserBtn').disabled = true;
