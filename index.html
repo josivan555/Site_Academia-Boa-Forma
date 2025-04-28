@@ -1637,7 +1637,7 @@
             // Cria o layout do comprovante
             const receipt = document.createElement('div');
             receipt.className = 'receipt';
-            receipt.style.width = '297mm'; // Tamanho A4 horizontal
+            receipt.style.width = '210mm'; // Largura da folha A4
             receipt.style.height = 'auto';
             receipt.style.border = '1px solid #000';
             receipt.style.padding = '20px';
@@ -1645,6 +1645,8 @@
             receipt.style.fontFamily = 'Arial, sans-serif';
             receipt.style.fontSize = '14px';
             receipt.style.lineHeight = '1.6';
+            receipt.style.margin = '0 auto'; // Centraliza horizontalmente
+            receipt.style.marginTop = '20mm'; // Posiciona no topo da folha
 
             // Cabeçalho do comprovante
             const receiptHeader = document.createElement('div');
@@ -1652,37 +1654,46 @@
             receiptHeader.style.textAlign = 'center';
             receiptHeader.style.marginBottom = '20px';
             receiptHeader.innerHTML = `
-                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/logo.jpg" alt="Logo Academia Boa Forma" style="width: 100px; height: auto; margin-bottom: 10px;">
-                <h1 style="font-size: 18px; margin: 0;">COMPROVANTE DE PAGAMENTO</h1>
-                <p style="font-size: 14px; margin: 5px 0;">ACADEMIA BOA FORMA</p>
-                <p style="font-size: 12px; margin: 0;">Boa Vista do Gurupi - MA</p>
+                <h1 style="font-size: 20px; margin: 0;">NOTA FISCAL DE SERVIÇO ELETRÔNICA - NFS-e</h1>
+                <p style="font-size: 16px; margin: 5px 0;">ACADEMIA BOA FORMA</p>
+                <p style="font-size: 14px; margin: 0;">CNPJ: 00.000.000/0000-00</p>
+                <p style="font-size: 14px; margin: 0;">Endereço: Rua Batista, 123, Boa Vista do Gurupi - MA</p>
+                <hr style="margin: 20px 0; border: 1px solid #000;">
             `;
             receipt.appendChild(receiptHeader);
 
-            // Corpo do comprovante
-            const receiptBody = document.createElement('div');
-            receiptBody.style.marginBottom = '20px';
-            receiptBody.innerHTML = `
-                <p>Recebemos de <strong>${client.name}</strong>, portador do RG <strong>${client.rg}</strong>, residente no endereço <strong>${client.address}, ${client.neighborhood}, ${client.city} - ${client.uf}</strong>, o valor de <strong>R$ ${parseFloat(client.monthlyPayment).toFixed(2)}</strong>, referente ao pagamento da mensalidade.</p>
-                <p>Data de pagamento: <strong>${new Date().toLocaleDateString()}</strong>.</p>
-                <p>Este comprovante serve como prova de quitação do valor acima mencionado.</p>
+            // Dados do cliente
+            const clientData = document.createElement('div');
+            clientData.style.marginBottom = '20px';
+            clientData.innerHTML = `
+                <h2 style="font-size: 16px; margin-bottom: 10px;">Dados do Cliente</h2>
+                <p><strong>Nome:</strong> ${client.name}</p>
+                <p><strong>RG:</strong> ${client.rg}</p>
+                <p><strong>Endereço:</strong> ${client.address}, ${client.neighborhood}, ${client.city} - ${client.uf}</p>
+                <p><strong>Contato:</strong> ${client.phone}</p>
             `;
-            receipt.appendChild(receiptBody);
+            receipt.appendChild(clientData);
 
-            // Rodapé com assinatura
+            // Descrição do serviço
+            const serviceDescription = document.createElement('div');
+            serviceDescription.style.marginBottom = '20px';
+            serviceDescription.innerHTML = `
+                <h2 style="font-size: 16px; margin-bottom: 10px;">Descrição do Serviço</h2>
+                <p>Mensalidade referente ao uso das instalações e serviços da Academia Boa Forma.</p>
+                <p><strong>Valor:</strong> R$ ${parseFloat(client.monthlyPayment).toFixed(2)}</p>
+                <p><strong>Data de Pagamento:</strong> ${new Date().toLocaleDateString()}</p>
+            `;
+            receipt.appendChild(serviceDescription);
+
+            // Rodapé com informações legais
             const receiptFooter = document.createElement('div');
-            receiptFooter.style.display = 'flex';
-            receiptFooter.style.justifyContent = 'space-between';
+            receiptFooter.style.textAlign = 'center';
             receiptFooter.style.marginTop = '30px';
             receiptFooter.innerHTML = `
-                <div style="text-align: center;">
-                    <p>______________________________</p>
-                    <p>Assinatura do Cliente</p>
-                </div>
-                <div style="text-align: center;">
-                    <p>____________________________</p>
-                    <p>Assinatura do Representante da Academia</p>
-                </div>
+                <hr style="margin: 20px 0; border: 1px solid #000;">
+                <p style="font-size: 12px;">Esta nota fiscal é válida como comprovante de pagamento.</p>
+                <p style="font-size: 12px;">Emitida por: Academia Boa Forma - CNPJ: 00.000.000/0000-00</p>
+                <p style="font-size: 12px;">Data de Emissão: ${new Date().toLocaleDateString()}</p>
             `;
             receipt.appendChild(receiptFooter);
 
