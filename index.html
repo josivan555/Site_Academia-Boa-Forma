@@ -625,6 +625,9 @@
         <!-- Label para ir para a página de administração -->
         <button id="goToAdminPanel" class="link-button">Ir para a página de administração</button>
         
+        <!-- Mensagem de restrição -->
+        <div id="accessRestrictionMessage" class="message error" style="display: none; margin-top: 10px;"></div>
+        
         <h2>Cadastro de Clientes - ACADEMIA BOA FORMA</h2>
         
         <form id="clientForm">
@@ -2456,10 +2459,17 @@
 
             // Botão para ir para a página de administração
             document.getElementById('goToAdminPanel').addEventListener('click', () => {
+                const restrictionMessage = document.getElementById('accessRestrictionMessage');
+                
                 if (!currentUser || !currentUser.isAdmin) {
-                    showMessage('loginMessage', 'Acesso negado, somente administradores podem acessar!', false);
+                    restrictionMessage.textContent = 'Acesso negado, somente administradores podem acessar!';
+                    restrictionMessage.style.display = 'block';
+                    setTimeout(() => {
+                        restrictionMessage.style.display = 'none';
+                    }, 5000); // Oculta a mensagem após 5 segundos
                     return;
                 }
+                
                 showPage('adminPanel');
                 renderUsersTable();
                 renderAllClientsTable();
