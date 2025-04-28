@@ -551,6 +551,21 @@
         .background-btn:hover {
             background-color: #2980b9;
         }
+
+        .background-thumbnail {
+            width: 100px;
+            height: 60px;
+            margin: 5px;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            object-fit: cover;
+            transition: border-color 0.3s ease;
+        }
+
+        .background-thumbnail:hover {
+            border-color: #3498db; /* Cor azul ao passar o mouse */
+        }
     </style>
 </head>
 <body id="mainBody">
@@ -1053,11 +1068,26 @@
             <h2>Alterar Background</h2>
             <p>Escolha um dos backgrounds abaixo ou faça upload de uma imagem:</p>
             <div class="background-options">
-                <button class="background-btn" data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Background%201.jpeg">Background 1</button>
-                <button class="background-btn" data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/backgroud%202.JPG">Background 2</button>
-                <button class="background-btn" data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%203.jpg">Background 3</button>
-                <button class="background-btn" data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%204.jpg">Background 4</button>
-                <button class="background-btn" data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%205.jpg">Background 5</button>
+                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Background%201.jpeg" 
+                     class="background-thumbnail" 
+                     data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Background%201.jpeg" 
+                     alt="Background 1">
+                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/backgroud%202.JPG" 
+                     class="background-thumbnail" 
+                     data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/backgroud%202.JPG" 
+                     alt="Background 2">
+                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%203.jpg" 
+                     class="background-thumbnail" 
+                     data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%203.jpg" 
+                     alt="Background 3">
+                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%204.jpg" 
+                     class="background-thumbnail" 
+                     data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%204.jpg" 
+                     alt="Background 4">
+                <img src="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%205.jpg" 
+                     class="background-thumbnail" 
+                     data-bg="https://raw.githubusercontent.com/josivan555/Site_Academia-Boa-Forma/refs/heads/main/Backgroud%205.jpg" 
+                     alt="Background 5">
             </div>
             <input type="file" id="uploadBackground" accept="image/*" style="margin-top: 10px;">
             <div style="margin-top: 10px;">
