@@ -621,6 +621,10 @@
     <!-- Painel de Cadastro de Clientes -->
     <div id="clientPanel" class="panel">
         <button id="logoutBtn" class="logout-btn">Sair</button>
+        
+        <!-- Label para ir para a página de administração -->
+        <button id="goToAdminPanel" class="link-button">Ir para a página de administração</button>
+        
         <h2>Cadastro de Clientes - ACADEMIA BOA FORMA</h2>
         
         <form id="clientForm">
@@ -761,6 +765,10 @@
     <!-- Painel de Administração -->
     <div id="adminPanel" class="panel">
         <button id="adminLogoutBtn" class="logout-btn">Sair</button>
+        
+        <!-- Label para ir para a página de cadastro -->
+        <button id="goToClientPanel" class="link-button">Ir para a página de cadastro</button>
+        
         <div class="admin-actions">
             <button id="changeBackgroundBtn">Alterar Background</button>
             <button id="backupBtn">Fazer Backup</button>
@@ -1657,7 +1665,7 @@
                 <h1 style="font-size: 20px; margin: 0;">NOTA FISCAL DE SERVIÇO ELETRÔNICA - NFS-e</h1>
                 <p style="font-size: 16px; margin: 5px 0;">ACADEMIA BOA FORMA</p>
                 <p style="font-size: 14px; margin: 0;">CNPJ: 00.000.000/0000-00</p>
-                <p style="font-size: 14px; margin: 0;">Endereço: Rua Batista, 123, Boa Vista do Gurupi - MA</p>
+                <p style="font-size: 14px; margin: 0;">Endereço: Rua Exemplo, 123, Boa Vista do Gurupi - MA</p>
                 <hr style="margin: 20px 0; border: 1px solid #000;">
             `;
             receipt.appendChild(receiptHeader);
@@ -2439,7 +2447,24 @@
                 renderUsersTable();
                 renderAllClientsTable();
             });
-            
+
+            // Botão para ir para a página de cadastro
+            document.getElementById('goToClientPanel').addEventListener('click', () => {
+                showPage('clientPanel');
+                renderClientsTable();
+            });
+
+            // Botão para ir para a página de administração
+            document.getElementById('goToAdminPanel').addEventListener('click', () => {
+                if (!currentUser || !currentUser.isAdmin) {
+                    showMessage('loginMessage', 'Acesso negado, somente administradores podem acessar!', false);
+                    return;
+                }
+                showPage('adminPanel');
+                renderUsersTable();
+                renderAllClientsTable();
+            });
+
             document.getElementById('saveEditedUserBtn').addEventListener('click', () => {
                 const userId = document.getElementById('editUserId').value;
                 const userIndex = users.findIndex(u => u.id === userId);
