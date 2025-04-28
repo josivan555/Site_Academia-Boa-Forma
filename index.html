@@ -2056,6 +2056,7 @@
                     <td class="actions">
                         <button onclick="adminEditClient('${client.id}')">Editar</button>
                         <button onclick="deleteClient('${client.id}')">Excluir</button>
+                        <button onclick="updateDueDate('${client.id}')">Atualizar Vencimento</button>
                     </td>
                 `;
 
@@ -2104,6 +2105,28 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        function updateDueDate(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) {
+                alert('Cliente não encontrado.');
+                return;
+            }
+
+            // Atualiza a data de vencimento para 30 dias a partir da data atual
+            const newDueDate = new Date();
+            newDueDate.setDate(newDueDate.getDate() + 30);
+            client.dueDate = newDueDate.toISOString();
+
+            // Atualiza o status para "Pago"
+            client.status = 'Pago';
+
+            // Salva os dados e atualiza a tabela
+            saveData();
+            renderAllClientsTable();
+
+            alert(`Data de vencimento atualizada para ${newDueDate.toLocaleDateString()}.`);
         }
 
         // Event Listeners
