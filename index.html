@@ -393,7 +393,7 @@
 
         .modal-content h2 {
             margin-top: 0;
-            color: #e74c3c;
+            color: #2ecc71;
         }
 
         .modal-content p {
@@ -404,7 +404,8 @@
 
         .modal-content button {
             padding: 10px 20px;
-            background-color: #e74c3c;
+            background-color: #e74c3c
+            ;
             color: white;
             border: none;
             border-radius: 4px;
@@ -412,7 +413,7 @@
         }
 
         .modal-content button:hover {
-            background-color: #c0392b;
+            background-color: #27ae60;
         }
 
         /* Estilo para o comprovante de pagamento */
@@ -841,6 +842,8 @@
                 <!-- Botão de impressão para clientes -->
                 <button id="printClientFormBtn" class="btn-success" disabled>Imprimir Formulário</button>
                 <button id="printReceiptBtn" class="btn-warning" disabled>Comprovante</button>
+                <!-- Botão de excluir cliente selecionado -->
+                <button id="deleteSelectedClientBtn" class="btn-danger" disabled>Excluir Cliente Selecionado</button>
             </div>
             
             <table id="allClientsTable">
@@ -1102,6 +1105,14 @@
             <h2>Aviso</h2>
             <p>RG/CPF já cadastrado.</p>
             <button id="closeDuplicateRgCpfModal" class="btn-danger">Fechar</button>
+        </div>
+    </div>
+
+    <div id="backupSuccessModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Sucesso!</h2>
+            <p>Backup restaurado com sucesso!</p>
+            <button id="closeBackupSuccessModal" class="btn-success">Fechar</button>
         </div>
     </div>
 
@@ -1805,11 +1816,7 @@
             saveData();
 
             // Atualiza a tabela de clientes imediatamente
-            if (currentUser.isAdmin) {
-                renderAllClientsTable(); // Atualiza a tabela de todos os clientes
-            } else {
-                renderClientsTable(); // Atualiza a tabela de clientes do usuário atual
-            }
+            renderClientsTable();
 
             // Exibe a mensagem de confirmação
             alert('Cliente excluído com sucesso.');
@@ -1885,25 +1892,25 @@
             const fileInput = document.createElement('input');
             fileInput.type = 'file';
             fileInput.accept = '.txt';
-            
+
             fileInput.onchange = e => {
                 const file = e.target.files[0];
                 if (!file) return;
-                
+
                 const reader = new FileReader();
                 reader.onload = event => {
                     try {
                         const backupData = JSON.parse(event.target.result);
-                        
+
                         if (!backupData.users || !backupData.clients) {
                             showMessage('loginMessage', 'Arquivo de backup inválido', false);
                             return;
                         }
-                        
+
                         if (confirm('Tem certeza que deseja restaurar o backup? Todos os dados atuais serão substituídos.')) {
                             users = backupData.users;
                             clients = backupData.clients;
-                            
+
                             if (backupData.background) {
                                 localStorage.setItem('academiaBackground', backupData.background);
                                 document.body.style.backgroundImage = `url(${backupData.background})`;
@@ -1911,29 +1918,28 @@
                                 localStorage.removeItem('academiaBackground');
                                 document.body.style.backgroundImage = '';
                             }
-                            
+
                             saveData();
-                            
-                            if (currentUser) {
-                                if (currentUser.isAdmin) {
-                                    renderUsersTable();
-                                    renderAllClientsTable();
-                                } else {
-                                    renderClientsTable();
-                                }
+
+                            if (currentUser && currentUser.isAdmin) {
+                                renderUsersTable();
+                                renderAllClientsTable();
+                            } else {
+                                renderClientsTable();
                             }
-                            
-                            showMessage('loginMessage', 'Backup restaurado com sucesso!', true);
+
+                            // Exibe o modal de sucesso
+                            document.getElementById('backupSuccessModal').style.display = 'block';
                         }
                     } catch (error) {
                         showMessage('loginMessage', 'Erro ao ler o arquivo de backup', false);
                         console.error(error);
                     }
                 };
-                
+
                 reader.readAsText(file);
             };
-            
+
             fileInput.click();
         }
 
@@ -2096,7 +2102,6 @@
                     <td>${users.find(u => u.id === client.registeredBy)?.name || 'Desconhecido'}</td>
                     <td class="actions">
                         <button onclick="adminEditClient('${client.id}')">Editar</button>
-                        <button onclick="deleteClient('${client.id}')">Excluir</button>
                         <button onclick="updateDueDate('${client.id}')">Atualizar Vencimento</button>
                     </td>
                 `;
@@ -2112,9 +2117,10 @@
                     row.classList.add('selected-row');
                     selectedClientId = client.id;
 
-                    // Habilita os botões de impressão
+                    // Habilita os botões de impressão e exclusão
                     document.getElementById('printClientFormBtn').disabled = false;
                     document.getElementById('printReceiptBtn').disabled = false;
+                    document.getElementById('deleteSelectedClientBtn').disabled = false;
                 });
 
                 tbody.appendChild(row);
@@ -2179,6 +2185,7 @@
             document.getElementById('printFormBtn').disabled = true;
             document.getElementById('printClientFormBtn').disabled = true;
             document.getElementById('printReceiptBtn').disabled = true;
+            document.getElementById('deleteSelectedClientBtn').disabled = true;
             
             // Login
             document.getElementById('loginForm').addEventListener('submit', (e) => {
@@ -2347,6 +2354,47 @@
                 } else {
                     alert('Por favor, selecione um cliente para imprimir o comprovante.');
                 }
+            });
+
+            // Botão de excluir cliente selecionado
+            document.getElementById('deleteSelectedClientBtn').addEventListener('click', () => {
+                if (!selectedClientId) {
+                    alert('Por favor, selecione um cliente para excluir.');
+                    return;
+                }
+
+                if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
+
+                // Encontra o índice do cliente na lista
+                const clientIndex = clients.findIndex(c => c.id === selectedClientId);
+                if (clientIndex === -1) {
+                    alert('Cliente não encontrado.');
+                    return;
+                }
+
+                // Atualiza o contador de clientes registrados pelo usuário
+                const client = clients[clientIndex];
+                const user = users.find(u => u.id === client.registeredBy);
+                if (user) {
+                    user.clientsRegistered = Math.max(0, user.clientsRegistered - 1);
+                }
+
+                // Remove o cliente da lista
+                clients.splice(clientIndex, 1);
+
+                // Salva os dados atualizados no localStorage
+                saveData();
+
+                // Atualiza a tabela de clientes no painel de administração
+                renderAllClientsTable();
+
+                // Exibe a mensagem de confirmação
+                alert('Cliente excluído com sucesso.');
+
+                // Desabilita o botão de exclusão
+                document.getElementById('deleteSelectedClientBtn').disabled = true;
+                document.getElementById('printClientFormBtn').disabled = true;
+                document.getElementById('printReceiptBtn').disabled = true;
             });
 
             // Navegação
@@ -2589,6 +2637,11 @@
             // Fechar modal de aviso de RG/CPF duplicado
             document.getElementById('closeDuplicateRgCpfModal').addEventListener('click', () => {
                 document.getElementById('duplicateRgCpfModal').style.display = 'none';
+            });
+
+            // Fechar modal de sucesso de backup restaurado
+            document.getElementById('closeBackupSuccessModal').addEventListener('click', () => {
+                document.getElementById('backupSuccessModal').style.display = 'none';
             });
         });
     </script>
