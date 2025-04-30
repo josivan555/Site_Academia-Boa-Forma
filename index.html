@@ -377,7 +377,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .modal-content {
@@ -391,32 +391,32 @@
             text-align: center;
         }
 
-        .modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
+        .modal-content h2 {
+            margin-top: 0;
+            color: #e74c3c;
+        }
+
+        .modal-content p {
+            margin: 15px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #c0392b;
         }
 
         /* Estilo para o comprovante de pagamento */
         .receipt {
-            max-width: 148mm;
-            height: 64mm;
-            border: 1px solid #000;
-            padding: 10px;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-        }
-
-        .receipt-header {
-            text-align: center; /* Centraliza o texto */
-            text-align: center; /* Centraliza o texto */
-            margin-bottom: 20px; /* Espaçamento abaixo do cabeçalho */
-        }
-
-        .receipt-header h1 {
-            font-size: 18px; /* Tamanho do título */
             margin: 0;
         }
 
@@ -658,7 +658,7 @@
             </div>
             
             <div class="form-row">
-                <input type="text" id="clientRg" placeholder="RG" required>
+                <input type="text" id="clientRgCpf" placeholder="RG/CPF" required>
                 <input type="text" id="clientRgOrg" placeholder="Órgão Emissor" required>
                 <select id="clientRgUf" required>
                     <option value="">UF</option>
@@ -760,7 +760,7 @@
                     <th>ID</th>
                     <th>Nome</th>
                     <th>Sexo</th>
-                    <th>RG</th>
+                    <th>RG/CPF</th> <!-- Alterado para RG/CPF -->
                     <th>Contato</th>
                     <th>Status</th>
                     <th>Cadastro</th>
@@ -958,7 +958,7 @@
                 </div>
                 
                 <div class="form-row">
-                    <input type="text" id="adminClientRg" placeholder="RG" required>
+                    <input type="text" id="adminClientRgCpf" placeholder="RG/CPF" required>
                     <input type="text" id="adminClientRgOrg" placeholder="Órgão Emissor" required>
                     <select id="adminClientRgUf" required>
                         <option value="">UF</option>
@@ -1093,6 +1093,15 @@
             <div style="margin-top: 10px;">
                 <button id="closeBackgroundModal" class="btn-danger">Fechar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal de aviso para RG/CPF já cadastrado -->
+    <div id="duplicateRgCpfModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Aviso</h2>
+            <p>RG/CPF já cadastrado.</p>
+            <button id="closeDuplicateRgCpfModal" class="btn-danger">Fechar</button>
         </div>
     </div>
 
@@ -1385,10 +1394,11 @@
 
         // Funções de clientes
         function addClient(clientData) {
-            // Verifica se o cliente já existe (por RG e registrado pelo mesmo usuário)
-            const existingClient = clients.find(c => c.rg === clientData.rg && c.registeredBy === currentUser.id);
+            // Verifica se o RG/CPF já está cadastrado
+            const existingClient = clients.find(c => c.rgCpf === clientData.rgCpf);
             if (existingClient) {
-                showMessage('loginMessage', 'Cliente já cadastrado.', false);
+                // Exibe o modal de aviso
+                document.getElementById('duplicateRgCpfModal').style.display = 'block';
                 return;
             }
 
@@ -1470,31 +1480,33 @@
         function editClient(clientId) {
             const client = clients.find(c => c.id === clientId);
             if (!client) return;
-            
-            isEditingClient = true;
-            currentEditingClientId = clientId;
-            
-            // Preenche o formulário com os dados do cliente
+
+            // Preenche os campos do formulário com os dados do cliente
             document.getElementById('clientId').value = client.id;
-            document.getElementById('clientName').value = client.name;
-            document.getElementById('clientGender').value = client.gender;
-            document.getElementById('clientRg').value = client.rg;
-            document.getElementById('clientRgOrg').value = client.rgOrg;
-            document.getElementById('clientRgUf').value = client.rgUf;
-            document.getElementById('clientRgDate').value = client.rgDate;
-            document.getElementById('clientAddress').value = client.address;
-            document.getElementById('clientNeighborhood').value = client.neighborhood;
-            document.getElementById('clientCep').value = client.cep;
-            document.getElementById('clientCity').value = client.city;
-            document.getElementById('clientUf').value = client.uf;
-            document.getElementById('clientEmail').value = client.email;
-            document.getElementById('clientPhone').value = client.phone;
+            document.getElementById('clientName').value = client.name || '';
+            document.getElementById('clientGender').value = client.gender || '';
+            document.getElementById('clientRgCpf').value = client.rgCpf || '';
+            document.getElementById('clientRgOrg').value = client.rgOrg || '';
+            document.getElementById('clientRgUf').value = client.rgUf || '';
+            document.getElementById('clientRgDate').value = client.rgDate ? client.rgDate.split('T')[0] : '';
+            document.getElementById('clientAddress').value = client.address || '';
+            document.getElementById('clientNeighborhood').value = client.neighborhood || '';
+            document.getElementById('clientCep').value = client.cep || '';
+            document.getElementById('clientCity').value = client.city || '';
+            document.getElementById('clientUf').value = client.uf || '';
+            document.getElementById('clientEmail').value = client.email || '';
+            document.getElementById('clientPhone').value = client.phone || '';
             document.getElementById('clientMonthlyPayment').value = client.monthlyPayment || '';
-            document.getElementById('clientDueDate').value = client.dueDate.split('T')[0];
-            
+            document.getElementById('clientDueDate').value = client.dueDate ? client.dueDate.split('T')[0] : '';
+
+            // Ajusta os botões para o modo de edição
             document.getElementById('saveClientBtn').style.display = 'none';
             document.getElementById('updateClientBtn').style.display = 'block';
             document.getElementById('cancelEditBtn').style.display = 'block';
+
+            // Define o ID do cliente que está sendo editado
+            isEditingClient = true;
+            currentEditingClientId = clientId;
         }
 
         function adminEditClient(clientId) {
@@ -1505,7 +1517,7 @@
             document.getElementById('adminClientId').value = client.id;
             document.getElementById('adminClientName').value = client.name;
             document.getElementById('adminClientGender').value = client.gender;
-            document.getElementById('adminClientRg').value = client.rg;
+            document.getElementById('adminClientRgCpf').value = client.rgCpf;
             document.getElementById('adminClientRgOrg').value = client.rgOrg;
             document.getElementById('adminClientRgUf').value = client.rgUf;
             document.getElementById('adminClientRgDate').value = client.rgDate;
@@ -1641,7 +1653,7 @@
             addDataRow('ID:', client.id.substr(0, 8));
             addDataRow('Nome:', client.name);
             addDataRow('Sexo:', client.gender);
-            addDataRow('RG:', client.rg);
+            addDataRow('RG:', client.rgCpf);
             addDataRow('Órgão Emissor:', client.rgOrg);
             addDataRow('UF:', client.rgUf);
             addDataRow('Data de Emissão:', new Date(client.rgDate).toLocaleDateString());
@@ -1711,7 +1723,7 @@
             clientData.innerHTML = `
                 <h2 style="font-size: 16px; margin-bottom: 10px;">Dados do Cliente</h2>
                 <p><strong>Nome:</strong> ${client.name}</p>
-                <p><strong>RG:</strong> ${client.rg}</p>
+                <p><strong>RG:</strong> ${client.rgCpf}</p>
                 <p><strong>Endereço:</strong> ${client.address}, ${client.neighborhood}, ${client.city} - ${client.uf}</p>
                 <p><strong>Contato:</strong> ${client.phone}</p>
             `;
@@ -1771,23 +1783,36 @@
 
         function deleteClient(clientId) {
             if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
-            
+
+            // Encontra o índice do cliente na lista
             const clientIndex = clients.findIndex(c => c.id === clientId);
-            if (clientIndex === -1) return;
-            
-            // Atualiza contador do usuário
+            if (clientIndex === -1) {
+                alert('Cliente não encontrado.');
+                return;
+            }
+
+            // Atualiza o contador de clientes registrados pelo usuário
             const client = clients[clientIndex];
             const user = users.find(u => u.id === client.registeredBy);
-            if (user) user.clientsRegistered--;
-            
-            clients.splice(clientIndex, 1);
-            saveData();
-            
-            if (currentUser.isAdmin) {
-                renderAllClientsTable();
-            } else {
-                renderClientsTable();
+            if (user) {
+                user.clientsRegistered = Math.max(0, user.clientsRegistered - 1);
             }
+
+            // Remove o cliente da lista
+            clients.splice(clientIndex, 1);
+
+            // Salva os dados atualizados no localStorage
+            saveData();
+
+            // Atualiza a tabela de clientes imediatamente
+            if (currentUser.isAdmin) {
+                renderAllClientsTable(); // Atualiza a tabela de todos os clientes
+            } else {
+                renderClientsTable(); // Atualiza a tabela de clientes do usuário atual
+            }
+
+            // Exibe a mensagem de confirmação
+            alert('Cliente excluído com sucesso.');
         }
 
         function checkDueDate(dueDate, registrationDate) {
@@ -1953,7 +1978,7 @@
                 const searchTerm = filter.toLowerCase();
                 userClients = userClients.filter(c =>
                     c.name.toLowerCase().includes(searchTerm) ||
-                    c.rg.toLowerCase().includes(searchTerm)
+                    c.rgCpf.toLowerCase().includes(searchTerm)
                 );
             }
 
@@ -1966,7 +1991,7 @@
                     <td>${client.id.substr(0, 8)}</td>
                     <td>${client.name}</td>
                     <td>${client.gender}</td>
-                    <td>${client.rg}</td>
+                    <td>${client.rgCpf || 'Não informado'}</td>
                     <td>${client.phone}</td>
                     <td style="color: ${client.status === 'Pago' ? 'green' : 'red'}; font-weight: bold;">
                         ${client.status}
@@ -2034,7 +2059,7 @@
                 const searchTerm = searchFilter.toLowerCase();
                 filteredClients = filteredClients.filter(c =>
                     c.name.toLowerCase().includes(searchTerm) ||
-                    c.rg.toLowerCase().includes(searchTerm)
+                    c.rgCpf.toLowerCase().includes(searchTerm)
                 );
             }
 
@@ -2060,7 +2085,7 @@
                 row.innerHTML = `
                     <td>${client.id.substr(0, 8)}</td>
                     <td>${client.name}</td>
-                    <td>${client.rg}</td>
+                    <td>${client.rgCpf}</td>
                     <td>${client.phone}</td>
                     <td style="color: ${statusColor}; font-weight: bold; cursor: pointer;" onclick="togglePaymentStatus('${client.id}')">
                         ${client.status}
@@ -2105,7 +2130,7 @@
             userClients.forEach(client => {
                 const registrationDate = new Date(client.registrationDate);
                 const dueDate = new Date(client.dueDate);
-                csv += `"${client.id.substr(0, 8)}","${client.name}","${client.gender}","${client.rg}","${client.phone}",`;
+                csv += `"${client.id.substr(0, 8)}","${client.name}","${client.gender}","${client.rgCpf}","${client.phone}",`;
                 csv += `"${client.status}","${registrationDate.toLocaleDateString()}","${dueDate.toLocaleDateString()}","${client.monthlyPayment || ''}","${client.address}","${client.neighborhood}","${client.city}",`;
                 csv += `"${client.uf}","${client.cep}","${client.email}"\n`;
             });
@@ -2209,7 +2234,7 @@
                 const clientData = {
                     name: document.getElementById('clientName').value,
                     gender: document.getElementById('clientGender').value,
-                    rg: document.getElementById('clientRg').value,
+                    rgCpf: document.getElementById('clientRgCpf').value, // Certifique-se de que este campo está preenchido
                     rgOrg: document.getElementById('clientRgOrg').value,
                     rgUf: document.getElementById('clientRgUf').value,
                     rgDate: document.getElementById('clientRgDate').value,
@@ -2236,7 +2261,7 @@
                 const clientData = {
                     name: document.getElementById('clientName').value,
                     gender: document.getElementById('clientGender').value,
-                    rg: document.getElementById('clientRg').value,
+                    rgCpf: document.getElementById('clientRgCpf').value, // Certifique-se de que este campo está preenchido
                     rgOrg: document.getElementById('clientRgOrg').value,
                     rgUf: document.getElementById('clientRgUf').value,
                     rgDate: document.getElementById('clientRgDate').value,
@@ -2257,7 +2282,7 @@
                 const clientData = {
                     name: document.getElementById('adminClientName').value,
                     gender: document.getElementById('adminClientGender').value,
-                    rg: document.getElementById('adminClientRg').value,
+                    rgCpf: document.getElementById('adminClientRgCpf').value, // Alterado para RG/CPF
                     rgOrg: document.getElementById('adminClientRgOrg').value,
                     rgUf: document.getElementById('adminClientRgUf').value,
                     rgDate: document.getElementById('adminClientRgDate').value,
@@ -2560,6 +2585,11 @@
             document.getElementById('editUserBtn').disabled = true;
             document.getElementById('deleteUserBtn').disabled = true;
             document.getElementById('printFormBtn').disabled = true;
+
+            // Fechar modal de aviso de RG/CPF duplicado
+            document.getElementById('closeDuplicateRgCpfModal').addEventListener('click', () => {
+                document.getElementById('duplicateRgCpfModal').style.display = 'none';
+            });
         });
     </script>
 </body>
